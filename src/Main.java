@@ -5,6 +5,7 @@ public class Main {
 		// TODO Auto-generated method stub
 		System.out.println("Hello les nuls !!");
 		
+<<<<<<< HEAD
 		/*User user_0_80 = new User(0, 80);
 		User user_0_250 = new User(0, 250);
 		User user_0_1000 = new User(0, 1000);
@@ -26,6 +27,10 @@ public class Main {
 		User user_100_1000 = new User(100, 1000);*/
 		
 		initMatriceDebits();
+=======
+		
+		
+>>>>>>> origin/master
 	}
 
 	static void initMatriceDebits(){

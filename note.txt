@@ -1,0 +1,55 @@
+Mettre des points d'accée partout c'est pas une bonne chose car interférence !!
+fiare un exemple lors de la présentation. Montrer que les interférence sa baisse le débit.
+
+Le relaygae exemple 100% de relay de 100 bit il relais 50bit (la moitier)
+(le mec a aucun interet de relayer) car sa consomme sont débit et baterrie
+
+pour les récompenser on va pas les punire on va meme les recompenser ave cdu débit en fonction de ce qu'il partage
+
+l'algo du cei il tiens compte du maxsnr en fonction de la cooperation
+
+scénario :
+4 utilisateurs
+1 il coopére pas
+1 coopére 10%
+1 50%
+1 100%
+
+donc les bit qui vont a l'exterieur de la cellule on les supprime on note juste le nombre qu'on a mis dehors
+Du coup avec ce qui reste on fait les stats(on les met en buffer on calcul les délis)
+faire pour notre simu (0,24,50,75,100)
+
+on s'en de la distance des utilisateurs.
+
+Tout ça c'est de la merde on tiens pas compte des services des utilisateurs.
+On cherche a améliorer le systéme
+
+donc on fait un mec
+3 mec a 100% avec un sueil a 1s(http) un a 250ms 80ms(voix)
+3 mec a 75%
+3 mec a 50%
+3 mec a 25%
+3 mec a 0%
+
+donc 15 sources crée des paquet a une certaine moyenne
+
+exemple 128 UR et 5 time (=2ms)slot donc 640 uniter de ressource si en moyenne
+ les utilisateurs on 4 bah du coup on peux transmettre en moyenne 2560 bits
+
+2560/15(nb de source)=170,66 bit par 2ms nombre max de débit que poura atteindre une personne après c'est la congestion
+
+on commence par exemple a 20 bit par 2ms
+deuxiéme point elle parle a 40 puis 60 puis 80 ... a 180 le RR va etre dans les choux( du point de vue délais)
+
+on continue jusqu'a que la meilleur solution craque 
+
+faire le RR maxSNR, WFO, CEI (aide celui qui coopere), CEI+WFO(notre objectif)m,kn*pdor
+
+genéré le débit avec un loi gausienne pour avoir des resultat cohérente de débit
+
+
+
+
+
+
+

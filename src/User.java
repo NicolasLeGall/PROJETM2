@@ -6,7 +6,7 @@ public class User {
 	private int cooperation;
 	private int seuilPDOR;
 	private int SNRmoyen;
-	private int SNRSubcarrier[];
+	private int SNRSubcarrier[] = new int[128];
 	private int sommePaquet;
 	private int sommeDelais;
 	private int sommeDelaisPDOR;

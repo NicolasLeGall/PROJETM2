@@ -4,61 +4,68 @@ public class Bit {
 	
 	
 	
-	public int produceBit(User user, int actualTime){
-		int bitsGeneres =0 ;
+	public int produceBit(User user[], int actualTime){
+		int bitsGeneres = 0;
+		int total_bitsGeneres = 0;
 		MRG32k3a mrg = new MRG32k3a();
 		boolean continuer = true;	
-			
+		int i = 0;
 		// Création d'un nouveau packet 
-		Paquet packet = null;
-
-		//bitsGeneres=(int)(MRG32k3a()*300);
-		// c'est de la magie noire mais sa génére en moyenne 150.5 bit
-		bitsGeneres=(int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())));
-		user.setBit_en_trop(user.getBit_en_trop()+bitsGeneres);
-        //Remplissage des paquets 
-
-        while(continuer){
-
-			// si le buffer est vide (il reste rien a envoyer comme bit)
-        	if(user.isBufferVide()){
-				
-				// si le nombre de bit a généré est plus grand que la taille d'un paquet
-				if(user.getBit_en_trop() > 100){
-					user.setBufferVide(false);
+		Paquet packet = new Paquet(0, 0, null);
+		for(i = 0; i<15; i++){
+			continuer = true;
+			//packet = null;
+			//bitsGeneres=(int)(MRG32k3a()*300);
+			// c'est de la magie noire mais sa génére en moyenne 150.5 bit
+			bitsGeneres=(int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())));
+			total_bitsGeneres = total_bitsGeneres + bitsGeneres;
+			user[i].setBit_en_trop(user[i].getBit_en_trop()+bitsGeneres);
+	        //Remplissage des paquets 
+	
+	        while(continuer){
+	        	System.out.println("test");
+				// si le buffer est vide (il reste rien a envoyer comme bit)
+	        	if(user[i].isBufferVide()){
 					
-					packet.setDateCreation(actualTime);
-					packet.setBitsRestants(100);
-					user.setBit_en_trop(user.getBit_en_trop()-100);
-					packet.setNextPaquet(new Paquet(0, 0, null));
-					user.setLePaquet(packet);
-					packet = packet.getNextPaquet();
-					user.setSommePaquet(user.getSommePaquet()+1);
-				}else{
-					continuer = false;
-
+					// si le nombre de bit a généré est plus grand que la taille d'un paquet
+					if(user[i].getBit_en_trop() > 100){
+						user[i].setBufferVide(false);
+						
+						packet.setDateCreation(actualTime);
+						packet.setBitsRestants(100);
+						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
+						packet.setNextPaquet(new Paquet(0, 0, null));
+						user[i].setLePaquet(packet);
+						packet = packet.getNextPaquet();
+						user[i].setSommePaquet(user[i].getSommePaquet()+1);
+					}else{
+						continuer = false;
+	
+					}
+				}else{//si le buffer contient quelque chose (n'est pas vide)
+					// on parcourt les paquet pour arriver au dernier
+					System.out.println("test2");
+					while(user[i].getLePaquet() != null){
+						System.out.println("test3");
+						packet = user[i].getLePaquet();
+					}
+					
+					if(user[i].getBit_en_trop() > 100){
+						packet.setDateCreation(actualTime);
+						packet.setBitsRestants(100);
+						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
+						packet.setNextPaquet(new Paquet(0, 0, null));
+						user[i].setLePaquet(packet);
+						packet = packet.getNextPaquet();
+						user[i].setSommePaquet(user[i].getSommePaquet()+1);
+					}else{
+						continuer = false;
+					}
 				}
-			}else{//si le buffer contient quelque chose (n'est pas vide)
-				// on parcourt les paquet pour arriver au dernier
-				while(user.getLePaquet() != null){
-					packet = user.getLePaquet();
-				}
-				
-				if(user.getBit_en_trop() > 100){
-					packet.setDateCreation(actualTime);
-					packet.setBitsRestants(100);
-					user.setBit_en_trop(user.getBit_en_trop()-100);
-					packet.setNextPaquet(new Paquet(0, 0, null));
-					user.setLePaquet(packet);
-					packet = packet.getNextPaquet();
-					user.setSommePaquet(user.getSommePaquet()+1);
-				}else{
-					continuer = false;
-				}
-			}
+	        }
         }
 	
-		return bitsGeneres;
+		return total_bitsGeneres;
 	}
 	
 	public int consumeBit(User user, int subCarrier, int actualTime){

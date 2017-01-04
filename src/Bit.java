@@ -44,10 +44,11 @@ public class Bit {
 					}
 				}else{//si le buffer contient quelque chose (n'est pas vide)
 					// on parcourt les paquet pour arriver au dernier
-					System.out.println("test2");
-					while(user[i].getLePaquet() != null){
-						System.out.println("test3");
-						packet = user[i].getLePaquet();
+					//System.out.println("test2");
+					packet = user[i].getLePaquet();
+					while(packet.getNextPaquet() != null){
+						//System.out.println("test3");
+						packet = packet.getNextPaquet();
 					}
 					
 					if(user[i].getBit_en_trop() > 100){

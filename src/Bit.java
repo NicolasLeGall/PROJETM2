@@ -19,8 +19,10 @@ public class Bit {
 			// c'est de la magie noire mais sa génére en moyenne 150.5 bit
 			//bitsGeneres=(int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())));
 			bitsGeneres=(int)(mrg.rand()*400);
-		System.out.println("utilisateur: "+i+" bit geneere "+bitsGeneres);
+		//System.out.println("utilisateur: "+i+" bit geneere "+bitsGeneres);
 			total_bitsGeneres = total_bitsGeneres + bitsGeneres;
+			packet = user[i].getLePaquet();
+			
 			user[i].setBit_en_trop(user[i].getBit_en_trop()+bitsGeneres);
 	        //Remplissage des paquets 
 		
@@ -29,7 +31,7 @@ public class Bit {
 				// si le buffer est vide (il reste rien a envoyer comme bit)
 	        	if(user[i].isBufferVide()){
 					
-					// si le nombre de bit a généré est plus grand que la taille d'un paquet
+					// si le nombre de bit généré est plus grand que la taille d'un paquet
 					if(user[i].getBit_en_trop() > 100){
 						user[i].setBufferVide(false);
 						
@@ -57,7 +59,10 @@ public class Bit {
 						packet.setBitsRestants(100);
 						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
 						packet.setNextPaquet(new Paquet(-1, -1, null));
-
+						/*
+						user[i].setLePaquet(packet);
+						packet = packet.getNextPaquet();
+						*/
 						user[i].setSommePaquet(user[i].getSommePaquet()+1);
 					}else{
 						continuer = false;

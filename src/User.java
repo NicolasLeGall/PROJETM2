@@ -19,7 +19,7 @@ public class User {
 		
 		cooperation = coop;
 		seuilPDOR = seuil;
-		lePaquet = new Paquet(0, 0, null);
+		lePaquet = new Paquet(-1, -1, null);
 		SNRmoyen = 0;
 		bit_en_trop = 0;
 		sommePaquet = 0;

@@ -11,19 +11,21 @@ public class Bit {
 		boolean continuer = true;	
 		int i = 0;
 		// Création d'un nouveau packet 
-		Paquet packet = new Paquet(0, 0, null);
+		Paquet packet = new Paquet(-1, -1, null);
 		for(i = 0; i<15; i++){
 			continuer = true;
 			//packet = null;
 			//bitsGeneres=(int)(MRG32k3a()*300);
 			// c'est de la magie noire mais sa génére en moyenne 150.5 bit
-			bitsGeneres=(int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())));
+			//bitsGeneres=(int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())));
+			bitsGeneres=(int)(mrg.rand()*400);
+		System.out.println("utilisateur: "+i+" bit geneere "+bitsGeneres);
 			total_bitsGeneres = total_bitsGeneres + bitsGeneres;
 			user[i].setBit_en_trop(user[i].getBit_en_trop()+bitsGeneres);
 	        //Remplissage des paquets 
-	
+		
 	        while(continuer){
-	        	System.out.println("test");
+
 				// si le buffer est vide (il reste rien a envoyer comme bit)
 	        	if(user[i].isBufferVide()){
 					
@@ -34,10 +36,9 @@ public class Bit {
 						packet.setDateCreation(actualTime);
 						packet.setBitsRestants(100);
 						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
-						packet.setNextPaquet(new Paquet(0, 0, null));
-						user[i].setLePaquet(packet);
-						packet = packet.getNextPaquet();
+						packet.setNextPaquet(new Paquet(-1, -1, null));
 						user[i].setSommePaquet(user[i].getSommePaquet()+1);
+		//		System.out.println("utilisateur: "+i+" bit geneere"+user[i].getBit_en_trop());
 					}else{
 						continuer = false;
 	
@@ -46,8 +47,8 @@ public class Bit {
 					// on parcourt les paquet pour arriver au dernier
 					//System.out.println("test2");
 					packet = user[i].getLePaquet();
+					
 					while(packet.getNextPaquet() != null){
-						//System.out.println("test3");
 						packet = packet.getNextPaquet();
 					}
 					
@@ -55,9 +56,8 @@ public class Bit {
 						packet.setDateCreation(actualTime);
 						packet.setBitsRestants(100);
 						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
-						packet.setNextPaquet(new Paquet(0, 0, null));
-						user[i].setLePaquet(packet);
-						packet = packet.getNextPaquet();
+						packet.setNextPaquet(new Paquet(-1, -1, null));
+
 						user[i].setSommePaquet(user[i].getSommePaquet()+1);
 					}else{
 						continuer = false;
@@ -71,7 +71,9 @@ public class Bit {
 	
 	public int consumeBit(User user, int subCarrier, int actualTime){
 		int bitConsommes = 0;
+
 		int SNRSubcarrier[] = user.getSNRSubcarrier();
+
 		//Si on consomme plus de bits que le paquet en contient
 		if(user.getLePaquet().getBitsRestants() <= SNRSubcarrier[subCarrier]){
 			//Mise à jour pour les statistiques
@@ -80,12 +82,13 @@ public class Bit {
 			if((actualTime - (user.getLePaquet().getDateCreation())) >= user.getSeuilPDOR()){
 				user.setSommeDelaisPDOR(user.getSommeDelaisPDOR()+1);
 			}
-			// si il reste plusieurs packet dans la chaine
-			if((user.getLePaquet().getNextPaquet() != null) ){
+			// si il reste plusieurs packet dans la chaine exemple de chaine (64=>100=>100=>-1=>NULL)
+			if((user.getLePaquet().getNextPaquet().getNextPaquet() != null)){
 				user.setSommePaquets_consommer(user.getSommePaquets_consommer()+1);
 				//On soustrait au prochain paquet le SNR moins le contenu du paquet actuel 
 				bitConsommes = SNRSubcarrier[subCarrier];
-				user.getLePaquet().getNextPaquet().setBitsRestants(user.getLePaquet().getNextPaquet().getBitsRestants() - (SNRSubcarrier[subCarrier] - user.getLePaquet().getBitsRestants()));
+		//System.out.println(user.getLePaquet().getNextPaquet().getBitsRestants()+" SNRSubcarrier "+SNRSubcarrier[subCarrier]+" premier paquet bit restant "+user.getLePaquet().getBitsRestants());
+				user.getLePaquet().getNextPaquet().setBitsRestants((user.getLePaquet().getNextPaquet().getBitsRestants()) - (SNRSubcarrier[subCarrier] - (user.getLePaquet().getBitsRestants())));
 				//Puis on supprime le paquet 
 				user.setLePaquet(user.getLePaquet().getNextPaquet());
 			}else{//si il rester qu'un packet
@@ -93,6 +96,7 @@ public class Bit {
 				bitConsommes = user.getLePaquet().getBitsRestants();
 				user.getLePaquet().setBitsRestants(0);
 				user.setBufferVide(true);
+		//System.out.println(bitConsommes);
 			}
 		}else{//Si il y a assez de bits dans ce paquet
 			user.getLePaquet().setBitsRestants((user.getLePaquet().getBitsRestants())-(SNRSubcarrier[subCarrier]));

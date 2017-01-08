@@ -12,6 +12,7 @@ public class User {
 	private int sommeDelaisPDOR;
 	private int sommePaquets_consommer;
 	private int bit_en_trop;
+	private int sommeUR;
 	private boolean bufferVide;
 	private Paquet lePaquet;
 	
@@ -32,6 +33,16 @@ public class User {
 	}
 	
 	
+	public int getSommeUR() {
+		return sommeUR;
+	}
+
+
+	public void setSommeUR(int sommeUR) {
+		this.sommeUR = sommeUR;
+	}
+
+
 	public int getSommePaquets_consommer() {
 		return sommePaquets_consommer;
 	}

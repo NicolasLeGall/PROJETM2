@@ -9,8 +9,10 @@ public class Main {
 		
 		int nb_tours;
 		int choixAlgo;
-		int i, j;
-		int actualTime = 0;
+		int i, j, g;
+		
+		int nb_bit_moy_genere = 200;
+		
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
 		Scanner scanInt = new Scanner(System.in);
@@ -36,6 +38,8 @@ public class Main {
 		tab_user[13] = new User(100, 250);
 		tab_user[14] = new User(100, 1000);
 		
+		
+		int actualTime = 0;
 		double debitTotal = 0;
 		double nbBitsgenere = 0;
 		double debit_total_simu = 0;
@@ -46,6 +50,12 @@ public class Main {
 		double nbPaquetsTotalsommePaquets_consommer = 0 ;
 		double delais_moyen = 0;
 		double PDOR = 0;
+		double user_sommeUR = 0;
+		double nbPaquetsNonEnvoyes = 0;
+		double res_sommeUR = 0;
+		double bit_par_UR = 0;
+		double taux_remplissage_buffer = 0;
+		double somme_bitsRestants = 0;
 		
 		//initMatriceDebits();
 		
@@ -72,101 +82,174 @@ public class Main {
 		
 		
 		
-		
-		Paquet packet = new Paquet(0, 0, null);
-		
-		for(i = 0; i < nb_tours; i++){
-			/*On donne a chaque utilisateur un débit pour les 128 subcarrieur qui varie de 0 à 10 et qui a pour moyenne sa distance de l'antenne*/
-			initMatriceDebits(tab_user);	
+		while(nb_bit_moy_genere < 400){
+				
 			
-			/*Initialisation des paquets utilisateurs*/
-			/*Le temps de création d'un packet est donnée a chaque packet avec monAntenne.actualTime */
+			Paquet packet = new Paquet(0, 0, null);
 			
-			nbBitsgenere = gestion_de_bit.produceBit(tab_user, actualTime);
-			total_nbBitsgenere = total_nbBitsgenere + nbBitsgenere;
+			for(i = 0; i < nb_tours; i++){
+				/*On donne a chaque utilisateur un débit pour les 128 subcarrieur qui varie de 0 à 10 et qui a pour moyenne sa distance de l'antenne*/
+				initMatriceDebits(tab_user);	
+				
+				/*Initialisation des paquets utilisateurs*/
+				/*Le temps de création d'un packet est donnée a chaque packet avec monAntenne.actualTime */
+				
+				nbBitsgenere = gestion_de_bit.produceBit(tab_user, actualTime, nb_bit_moy_genere);
+				total_nbBitsgenere = total_nbBitsgenere + nbBitsgenere;
+				
+				
+				//listage du contenue des paquets
+			/*	for(j=0; j<15;j++){
+					System.out.println("utilisateur: "+j+" bit en trop "+tab_user[j].getBit_en_trop());
+					packet = tab_user[j].getLePaquet();
+					System.out.print(packet.getBitsRestants()+"=>");
+					while(packet.getNextPaquet() != null){
+						//System.out.println("test3");
+						packet = packet.getNextPaquet();
+						System.out.print(packet.getBitsRestants()+"=>");
+					}
+					System.out.println();
+				}
+				
+				System.out.println();
+					*/
+	
+				/*Application de l'algorithme et ôtage des bits envoyés avec maxSNR*/
+				if(choixAlgo == 1){
+					debitTotal += scheduler.RR(tab_user, actualTime);
+				}
+				else if(choixAlgo == 2){
+					debitTotal += scheduler.maxSNR(tab_user, actualTime);
+				}
+				else if(choixAlgo == 3){
+					debitTotal += scheduler.WFO(tab_user, actualTime);
+				}
+				else if(choixAlgo == 4){
+					debitTotal += scheduler.CEI(tab_user, actualTime);
+				}
+				else if(choixAlgo == 5){
+					debitTotal += scheduler.CEI_WFO(tab_user, actualTime);
+				}
+				else{
+					System.out.println("choix de l'algorithme mauvais. Arret. \n");
+				}
 			
-			
-		/*	//listage du contenue des paquets
+				
+				/*Calcul du nombre de bit qui reste dans les paquets non envoyer*/
+				for(g = 0; g < 15; g++){
+					packet = tab_user[g].getLePaquet();
+					while(packet.getNextPaquet() != null){
+						somme_bitsRestants = somme_bitsRestants + packet.getBitsRestants();
+						packet = packet.getNextPaquet();
+					}
+				}
+				
+				
+				//+2 car on a 5 time slot et qu'on a dit que sa représenter 2secondes
+				actualTime += 2;
+	
+	
+				/*for(j=0; j<15;j++){
+					System.out.println("utilisateur: "+j+" bit en trop "+tab_user[j].getBit_en_trop());
+					packet = tab_user[j].getLePaquet();
+					System.out.print(packet.getBitsRestants()+"=>");
+					while(packet.getNextPaquet() != null){
+						//System.out.println("test3");
+						packet = packet.getNextPaquet();
+						System.out.print(packet.getBitsRestants()+"=>");
+					}
+					System.out.println();
+				}*/
+				
+			}
+			//parcour des utilisateurs
 			for(j=0; j<15;j++){
-				System.out.println("utilisateur: "+j+" bit en trop "+tab_user[j].getBit_en_trop());
-				packet = tab_user[j].getLePaquet();
-				System.out.print(packet.getBitsRestants()+"=>");
-				while(packet.getNextPaquet() != null){
-					//System.out.println("test3");
-					packet = packet.getNextPaquet();
-					System.out.print(packet.getBitsRestants()+"=>");
+				
+				/*Si il reste des packet non envoyer --> Récupération des délais et nb de paquets restants dans les paquets non envoyes */
+				if(tab_user[j].getLePaquet().getBitsRestants() != 0){
+					packet = tab_user[j].getLePaquet();
+					while(packet.getNextPaquet() != null){
+						//System.out.println("test3");
+						packet = packet.getNextPaquet();
+						nbPaquetsNonEnvoyes++;
+					}
+						/* Stats globales */
+						/*sommeDelais += (monAntenne.actualTime - tmpPacket->dateCreation);*/
 				}
-				System.out.println();
+				
+				/* Récupération des delais et paquets enregistrés */
+				sommeDelais += tab_user[j].getSommeDelais();
+				nbPaquetsTotal += tab_user[j].getSommePaquet();
+				nbPaquetsTotalPDOR+= tab_user[j].getSommeDelaisPDOR();
+				nbPaquetsTotalsommePaquets_consommer += tab_user[j].getSommePaquets_consommer();
+				user_sommeUR += tab_user[j].getSommeUR();
 			}
 			
-			System.out.println();
-				*/
+			bit_par_UR = debitTotal/((double)user_sommeUR);
+			taux_remplissage_buffer = somme_bitsRestants/actualTime;
+			res_sommeUR = ((double)(user_sommeUR)/(double)(5*128*nb_tours))*100;
+			debit_total_simu = debitTotal/actualTime;
+			delais_moyen = sommeDelais/(nbPaquetsTotalsommePaquets_consommer);
+			PDOR=((double)nbPaquetsTotalPDOR/((double)(nbPaquetsTotalsommePaquets_consommer)))*100;
+			if(nbPaquetsTotalsommePaquets_consommer == 0){
+				PDOR = 100;
+			}
+			
+			System.out.println("nbPaquetsNonEnvoyes : "+nbPaquetsNonEnvoyes);
+			System.out.println("nbPaquetsEnvoyes : "+nbPaquetsTotalsommePaquets_consommer );
+			System.out.println("NonEnvoyes+Envoyes : "+(nbPaquetsNonEnvoyes+nbPaquetsTotalsommePaquets_consommer)+" || nbPaquetsTotal reel : "+nbPaquetsTotal);
+			System.out.println("Pourcentage de bande passante utilisé : "+res_sommeUR);
+			System.out.println("Bit par Unité de ressource : "+bit_par_UR);
+			System.out.println("somme_bitsRestants/le temps : "+taux_remplissage_buffer);
+			System.out.println("PDOR : "+PDOR+" Ce resultat veux rien dire pour l'instant car il ont outs un seuil de PDOR different");
+			System.out.println("Nombre total de Bits genere : "+total_nbBitsgenere+" bits || consommer : "+debitTotal+" bits");
+			System.out.println("Delai moyen : "+delais_moyen+" ms  || Somme des delais: "+sommeDelais+" ms");
+			System.out.println("Débit total de la simulation: "+debit_total_simu+" bits/ms");
+			System.out.println("");
 
-			/*Application de l'algorithme et ôtage des bits envoyés avec maxSNR*/
-			if(choixAlgo == 1){
-				debitTotal += scheduler.RR(tab_user, actualTime);
-			}
-			else if(choixAlgo == 2){
-				debitTotal += scheduler.maxSNR(tab_user, actualTime);
-			}
-			else if(choixAlgo == 3){
-				debitTotal += scheduler.WFO(tab_user, actualTime);
-			}
-			else if(choixAlgo == 4){
-				debitTotal += scheduler.CEI(tab_user, actualTime);
-			}
-			else if(choixAlgo == 5){
-				debitTotal += scheduler.CEI_WFO(tab_user, actualTime);
-			}
-			else{
-				System.out.println("choix de l'algorithme mauvais. Arret. \n");
-			}
+			nb_bit_moy_genere = nb_bit_moy_genere +10;
+			
+			debitTotal = 0;
+			nbBitsgenere = 0;
+			debit_total_simu = 0;
+			total_nbBitsgenere = 0;
+			sommeDelais = 0 ;
+			nbPaquetsTotal = 0 ; 
+			nbPaquetsTotalPDOR = 0 ;
+			nbPaquetsTotalsommePaquets_consommer = 0 ;
+			delais_moyen = 0;
+			PDOR = 0;
+			user_sommeUR = 0;
+			nbPaquetsNonEnvoyes = 0;
+			res_sommeUR = 0;
+			bit_par_UR = 0;
+			taux_remplissage_buffer = 0;
+			somme_bitsRestants = 0;
+			
+			actualTime = 0;
+			
+			tab_user[0] = new User(0, 80);
+			tab_user[1] = new User(0, 250);
+			tab_user[2] = new User(0, 1000);
 		
-			//+2 car on a 5 time slot et qu'on a dit que sa représenter 2secondes
-			actualTime += 2;
-
-
-			/*for(j=0; j<15;j++){
-				System.out.println("utilisateur: "+j+" bit en trop "+tab_user[j].getBit_en_trop());
-				packet = tab_user[j].getLePaquet();
-				System.out.print(packet.getBitsRestants()+"=>");
-				while(packet.getNextPaquet() != null){
-					//System.out.println("test3");
-					packet = packet.getNextPaquet();
-					System.out.print(packet.getBitsRestants()+"=>");
-				}
-				System.out.println();
-			}*/
+			tab_user[3] = new User(25, 80);
+			tab_user[4] = new User(25, 250);
+			tab_user[5] = new User(25, 1000);
+			
+			tab_user[6] = new User(50, 80);
+			tab_user[7] = new User(50, 250);
+			tab_user[8] = new User(50, 1000);
+			
+			tab_user[9] = new User(75, 80);
+			tab_user[10] = new User(75, 250);
+			tab_user[11] = new User(75, 1000);
+			
+			tab_user[12] = new User(100, 80);
+			tab_user[13] = new User(100, 250);
+			tab_user[14] = new User(100, 1000);
 			
 		}
-		//parcour des utilisateurs
-		for(j=0; j<15;j++){
-		
-			/* Récupération des delais et paquets enregistrés */
-			sommeDelais += tab_user[j].getSommeDelais();
-			nbPaquetsTotal += tab_user[j].getSommePaquet();
-			nbPaquetsTotalPDOR+= tab_user[j].getSommeDelaisPDOR();
-			nbPaquetsTotalsommePaquets_consommer += tab_user[j].getSommePaquets_consommer();
-			//user_sommeUR = user_sommeUR + tab_user[j]->sommeUR;
-		}
-		
-		
-		
-		debit_total_simu = debitTotal/actualTime;
-		delais_moyen = sommeDelais/(nbPaquetsTotalsommePaquets_consommer);
-		PDOR=((double)nbPaquetsTotalPDOR/((double)(nbPaquetsTotalsommePaquets_consommer)))*100;
-		if(nbPaquetsTotalsommePaquets_consommer == 0){
-			PDOR = 100;
-		}
-		
-		
-		
-		System.out.println("Nombre total de Bits genere : "+total_nbBitsgenere+" bits || consommer : "+debitTotal+" bits");
-		System.out.println("Débit total de la simulation: "+debit_total_simu+" bits/ms || Somme des delais: "+sommeDelais+" ms");
-		System.out.println("Delai moyen : "+delais_moyen+" ms");
-		System.out.println("PDOR : "+PDOR+" Ce resultat veux rien dire pour l'instant car il ont outs un seuil de PDOR different");
-		System.out.println("Fin de la simulation");
-		
+		System.out.println("Simulation terminer");
 	}
 
 	

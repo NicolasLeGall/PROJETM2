@@ -4,7 +4,7 @@ public class Bit {
 	
 	
 	
-	public int produceBit(User user[], int actualTime){
+	public int produceBit(User user[], int actualTime, int nb_bit_moy_genere){
 		int bitsGeneres = 0;
 		int total_bitsGeneres = 0;
 		MRG32k3a mrg = new MRG32k3a();
@@ -18,7 +18,7 @@ public class Bit {
 			//bitsGeneres=(int)(MRG32k3a()*300);
 			// c'est de la magie noire mais sa génére en moyenne 150.5 bit
 			//bitsGeneres=(int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())));
-			bitsGeneres=(int)(mrg.rand()*400);
+			bitsGeneres=(int)(mrg.rand()*(nb_bit_moy_genere*2));
 		//System.out.println("utilisateur: "+i+" bit geneere "+bitsGeneres);
 			total_bitsGeneres = total_bitsGeneres + bitsGeneres;
 			packet = user[i].getLePaquet();
@@ -38,9 +38,9 @@ public class Bit {
 						packet.setDateCreation(actualTime);
 						packet.setBitsRestants(100);
 						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
-						packet.setNextPaquet(new Paquet(-1, -1, null));
+						
 						user[i].setSommePaquet(user[i].getSommePaquet()+1);
-		//		System.out.println("utilisateur: "+i+" bit geneere"+user[i].getBit_en_trop());
+				//System.out.println("utilisateur: "+i+" bit geneere"+user[i].getBit_en_trop());
 					}else{
 						continuer = false;
 	
@@ -55,10 +55,11 @@ public class Bit {
 					}
 					
 					if(user[i].getBit_en_trop() > 100){
-						packet.setDateCreation(actualTime);
-						packet.setBitsRestants(100);
-						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
 						packet.setNextPaquet(new Paquet(-1, -1, null));
+						packet.getNextPaquet().setDateCreation(actualTime);
+						packet.getNextPaquet().setBitsRestants(100);
+						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
+						
 						/*
 						user[i].setLePaquet(packet);
 						packet = packet.getNextPaquet();
@@ -78,7 +79,7 @@ public class Bit {
 		int bitConsommes = 0;
 
 		int SNRSubcarrier[] = user.getSNRSubcarrier();
-
+		user.setSommeUR(user.getSommeUR()+1);
 		//Si on consomme plus de bits que le paquet en contient
 		if(user.getLePaquet().getBitsRestants() <= SNRSubcarrier[subCarrier]){
 			//Mise à jour pour les statistiques
@@ -87,8 +88,8 @@ public class Bit {
 			if((actualTime - (user.getLePaquet().getDateCreation())) >= user.getSeuilPDOR()){
 				user.setSommeDelaisPDOR(user.getSommeDelaisPDOR()+1);
 			}
-			// si il reste plusieurs packet dans la chaine exemple de chaine (64=>100=>100=>-1=>NULL)
-			if((user.getLePaquet().getNextPaquet().getNextPaquet() != null)){
+			// si il reste plusieurs packet dans la chaine exemple de chaine (64=>100=>100=>NULL)
+			if((user.getLePaquet().getNextPaquet() != null)){
 				user.setSommePaquets_consommer(user.getSommePaquets_consommer()+1);
 				//On soustrait au prochain paquet le SNR moins le contenu du paquet actuel 
 				bitConsommes = SNRSubcarrier[subCarrier];

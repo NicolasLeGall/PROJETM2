@@ -68,7 +68,7 @@ public class Main {
 		//System.out.println("choix algo "+choixAlgo);
 		scanInt.close(); 
 		
-		
+		/*On écrit dans le fichier csv le nom des colonnes */
 		String fichier ="Resultat.csv";
 		FileWriter fw = new FileWriter (fichier);
 		BufferedWriter bw = new BufferedWriter (fw);
@@ -84,19 +84,19 @@ public class Main {
 		}	
 		
 		
-		
+		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
 		while(nb_bit_moy_genere < 400){
 				
-			
+			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);
 			
+			//boucle du temps
 			for(i = 0; i < nb_tours; i++){
-				/*On donne a chaque utilisateur un débit pour les 128 subcarrieur qui varie de 0 à 10 et qui a pour moyenne sa distance de l'antenne*/
+				/*On donne a chaque utilisateur un débit pour les 128 subcarrieur qui varie de 0 à 10 et qui a pour moyenne 6*/
 				initMatriceDebits(tab_user);	
 				
 				/*Initialisation des paquets utilisateurs*/
-				/*Le temps de création d'un packet est donnée a chaque packet avec monAntenne.actualTime */
-				
+				/*Le temps de création d'un packet est donnée a chaque packet avec actualTime */
 				nbBitsgenere = gestion_de_bit.produceBit(tab_user, actualTime, nb_bit_moy_genere);
 				total_nbBitsgenere = total_nbBitsgenere + nbBitsgenere;
 				
@@ -113,11 +113,10 @@ public class Main {
 					}
 					System.out.println();
 				}
-				
 				System.out.println();
 					*/
 	
-				/*Application de l'algorithme et ôtage des bits envoyés avec maxSNR*/
+				/*Application de l'algorithme et ôtage des bits dans les paquets*/
 				if(choixAlgo == 1){
 					debitTotal += scheduler.RR(tab_user, actualTime);
 				}
@@ -138,7 +137,7 @@ public class Main {
 				}
 			
 				
-				/*Calcul du nombre de bit qui reste dans les paquets non envoyer*/
+				/*Calcul du nombre de bit qui reste dans les paquets non envoyer pour chaque utilisateurs*/
 				for(g = 0; g < 15; g++){
 					packet = tab_user[g].getLePaquet();
 					while(packet.getNextPaquet() != null){
@@ -152,7 +151,9 @@ public class Main {
 				actualTime += 2;
 	
 	
-				/*for(j=0; j<15;j++){
+				/*
+				//listage du contenue des paquets
+				for(j=0; j<15;j++){
 					System.out.println("utilisateur: "+j+" bit en trop "+tab_user[j].getBit_en_trop());
 					packet = tab_user[j].getLePaquet();
 					System.out.print(packet.getBitsRestants()+"=>");
@@ -167,7 +168,6 @@ public class Main {
 			}
 			//parcour des utilisateurs
 			for(j=0; j<15;j++){
-				
 				/*Si il reste des packet non envoyer --> Récupération des délais et nb de paquets restants dans les paquets non envoyes */
 				if(tab_user[j].getLePaquet().getBitsRestants() != 0){
 					packet = tab_user[j].getLePaquet();
@@ -211,7 +211,7 @@ public class Main {
 			System.out.println("");
 			
 			try {
-	
+				//on écrit dans le fichier les resultat obtenue
 				fichierSortie.println (nb_bit_moy_genere+";"+debit_total_simu+";"+total_nbBitsgenere+";"+debitTotal+";"+delais_moyen+";"+PDOR+";"+res_sommeUR+";"+bit_par_UR+";"+taux_remplissage_buffer+";"+nbPaquetsTotalsommePaquets_consommer+";"); 
 				
 				
@@ -222,9 +222,10 @@ public class Main {
 			
 			
 			
-			
+			//on incrémente le nb de bit qu'on va générer au prochain tour
 			nb_bit_moy_genere = nb_bit_moy_genere +10;
 			
+			//on réinitialise toute les variables
 			debitTotal = 0;
 			nbBitsgenere = 0;
 			debit_total_simu = 0;
@@ -265,22 +266,11 @@ public class Main {
 			tab_user[14] = new User(100, 1000);
 			
 		}
+		//on quitte le fichier .csv
 		fichierSortie.close();
 		System.out.println("Simulation terminer");
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	static void initMatriceDebits(User user[]){
@@ -293,16 +283,18 @@ public class Main {
 		double puissance = 222;
 		MRG32k3a mrg = new MRG32k3a();
 		double somme= 0;
+		//parcour des utilisateurs
 		for(i = 0; i<15; i++){
-			for(j = 0; j<128; j++){
+			for(j = 0; j<128; j++){//parcour des subcarrier. On parcour pas les timeslots car on considére que le mkn ne varie pas sur un si petit laps de temps. Donc oui les Times slot ne serve a rien.
 				//System.out.println("test3 = "+mrg.rand());
+				//formule du mkn demander a cédric pour plus de détail moi je m'en rapelle plus. Mais en gros sa prend en compte la distance, la puissance, sa génre des log etc
 				alpha =((-1 / 1) *(Math.log( 1 - mrg.rand())));/*alpha = 1 en moyenne*/
 				mkn=1+(((puissance)*alpha)/(d*d));
 				//System.out.println("test4 = "+((int)((Math.log(mkn)/Math.log(2))-0.5)));
 				/*-0.5 pour et (int) pour convertir a l'arrondie inférieur*/
 				SNRActuels[j] = ((int)((Math.log(mkn)/Math.log(2))-0.5));// sa fait 6 en moyenne
 	
-				somme = somme + SNRActuels[j];
+				//somme = somme + SNRActuels[j];
 				//System.out.println("SNRActuels sur UR"+j+" = "+SNRActuels[j]);
 			}
 			user[i].setSNRSubcarrier(SNRActuels);

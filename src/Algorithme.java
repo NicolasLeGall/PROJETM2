@@ -65,7 +65,9 @@ public class Algorithme {
 						break;
 					}
 				}
+				//on commence a parcourir la liste des utilisateurs par un user au hasard pour ne pas parcourir la liste tout le temps de la meme façon
 				random_user=(int)(mrg.rand()*nb_user);
+				//parcour de la premier partie de la liste des utilisateurs
 				for (i = random_user; i < nb_user ; i++){
 					SNRSubcarrier_i = user[i].getSNRSubcarrier();
 					SNRSubcarrier_MaxU = user[MaxU].getSNRSubcarrier();
@@ -76,6 +78,7 @@ public class Algorithme {
 						nouveau = 1;
 					}
 				}
+				//parcour de la seconde partie de la liste dse utilisateurs
 				for (i = 0; i < random_user ; i++){
 					SNRSubcarrier_i = user[i].getSNRSubcarrier();
 					SNRSubcarrier_MaxU = user[MaxU].getSNRSubcarrier();
@@ -87,6 +90,7 @@ public class Algorithme {
 					}
 				}
 				/*printf("maxU = %d   ", MaxU);*/
+				//une fois qu'on a notre MaxU c'est a dire l'utilisateurs avec le meilleur SNR sur la subcarrier on lui fait envoyer ces bits
 				if(nouveau == 1){
 					debitTotalTrame = debitTotalTrame + bit.consumeBit(user[MaxU], j, actualTime);
 				}

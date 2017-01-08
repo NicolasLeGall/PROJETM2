@@ -1,11 +1,12 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		int nb_tours;
 		int choixAlgo;
@@ -69,13 +70,15 @@ public class Main {
 		
 		
 		String fichier ="Resultat.csv";
+		FileWriter fw = new FileWriter (fichier);
+		BufferedWriter bw = new BufferedWriter (fw);
+		PrintWriter fichierSortie = new PrintWriter (bw); 
 		try {
-			FileWriter fw = new FileWriter (fichier);
-			BufferedWriter bw = new BufferedWriter (fw);
-			PrintWriter fichierSortie = new PrintWriter (bw); 
-			fichierSortie.println ("nb_tours="+nb_tours+";choixAlgo="+choixAlgo+";\n"); 
 			
-			fichierSortie.close();
+			fichierSortie.println ("nb_tours="+nb_tours+";choixAlgo="+choixAlgo+";\n"); 
+			fichierSortie.println ("nb_bit_moy_genere;debit_total_simu;total_nbBitsgenere;debitTotal;delais_moyen;PDOR;res_sommeUR;bit_par_UR;taux_remplissage_buffer;nbPaquetsTotalsommePaquets_consommer;"); 
+			
+			
 		}catch (Exception e){
 			System.out.println(e.toString());
 		}	
@@ -206,7 +209,20 @@ public class Main {
 			System.out.println("Delai moyen : "+delais_moyen+" ms  || Somme des delais: "+sommeDelais+" ms");
 			System.out.println("Débit total de la simulation: "+debit_total_simu+" bits/ms");
 			System.out.println("");
-
+			
+			try {
+	
+				fichierSortie.println (nb_bit_moy_genere+";"+debit_total_simu+";"+total_nbBitsgenere+";"+debitTotal+";"+delais_moyen+";"+PDOR+";"+res_sommeUR+";"+bit_par_UR+";"+taux_remplissage_buffer+";"+nbPaquetsTotalsommePaquets_consommer+";"); 
+				
+				
+			}catch (Exception e){
+				System.out.println(e.toString());
+			}
+			
+			
+			
+			
+			
 			nb_bit_moy_genere = nb_bit_moy_genere +10;
 			
 			debitTotal = 0;
@@ -249,6 +265,7 @@ public class Main {
 			tab_user[14] = new User(100, 1000);
 			
 		}
+		fichierSortie.close();
 		System.out.println("Simulation terminer");
 	}
 

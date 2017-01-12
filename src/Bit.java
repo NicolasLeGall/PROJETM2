@@ -16,9 +16,9 @@ public class Bit {
 			continuer = true;
 
 			//c'est de la magie noire mais sa génére en moyenne 150.5 bit. Sa utilise une fonction logarithmique pour générer les bit. 0.00666666 c'est l'element qu'on change pour faire varier la moyenne ici sa fait 150.5 de moyenne
-			//bitsGeneres=(int)((-1 / nb_bit_moy_genere) *(Math.log( 1 - mrg.rand())));
+			bitsGeneres=(int) (((int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())))*nb_bit_moy_genere)/150);
 			//Mais dans un premier temps pour simplifier on genre juste de maniére alétoire le nombre de bit. Avec comme moyenne nb_bit_moy_genere qui en envoiyer en paramatre
-			bitsGeneres=(int)(mrg.rand()*(nb_bit_moy_genere*2));
+			//bitsGeneres=(int)(mrg.rand()*(nb_bit_moy_genere*2));
 		//System.out.println("utilisateur: "+i+" bit geneere "+bitsGeneres);
 			total_bitsGeneres = total_bitsGeneres + bitsGeneres;
 			packet = user[i].getLePaquet();
@@ -32,13 +32,13 @@ public class Bit {
 	        	if(user[i].isBufferVide()){
 					
 					// si le nombre de bit généré est plus grand que la taille d'un paquet
-					if(user[i].getBit_en_trop() > 100){
+					if(user[i].getBit_en_trop() > 40){
 						//on dit que maintenant le buffer sera plus vide
 						user[i].setBufferVide(false);
 						//en réaliter le buffer n'est jamais vide il a forcement un paquet donc on met nos valeur dedans
 						packet.setDateCreation(actualTime);
-						packet.setBitsRestants(100);
-						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
+						packet.setBitsRestants(40);
+						user[i].setBit_en_trop(user[i].getBit_en_trop()-40);
 						
 						user[i].setSommePaquet(user[i].getSommePaquet()+1);
 				//System.out.println("utilisateur: "+i+" bit geneere"+user[i].getBit_en_trop());
@@ -53,13 +53,13 @@ public class Bit {
 						packet = packet.getNextPaquet();
 					}
 					// si le nombre de bit généré est plus grand que la taille d'un paquet
-					if(user[i].getBit_en_trop() > 100){
+					if(user[i].getBit_en_trop() > 40){
 						//on créer un nouveau paquet et on met dedans 100bit et sa date de création
 						packet.setNextPaquet(new Paquet(-1, -1, null));
 						packet.getNextPaquet().setDateCreation(actualTime);
-						packet.getNextPaquet().setBitsRestants(100);
+						packet.getNextPaquet().setBitsRestants(40);
 						//on met a jour la varaible bit_en_trop
-						user[i].setBit_en_trop(user[i].getBit_en_trop()-100);
+						user[i].setBit_en_trop(user[i].getBit_en_trop()-40);
 						
 						/*
 						user[i].setLePaquet(packet);

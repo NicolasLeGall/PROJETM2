@@ -12,7 +12,7 @@ public class Main {
 		int choixAlgo;
 		int i, j, g;
 		
-		double nb_bit_moy_genere = 250;
+		double nb_bit_moy_genere = 340;
 		
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
@@ -85,7 +85,7 @@ public class Main {
 		
 		
 		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
-		while(nb_bit_moy_genere < 450){
+		while(nb_bit_moy_genere < 370){
 				
 			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);
@@ -215,7 +215,7 @@ public class Main {
 			System.out.println("PDOR : "+PDOR+" Ce resultat veux rien dire pour l'instant car il ont outs un seuil de PDOR different");
 			System.out.println("Nombre total de Bits genere : "+total_nbBitsgenere+" bits || consommer : "+debitTotal+" bits");
 			System.out.println("Delai moyen : "+delais_moyen+" ms  || Somme des delais: "+sommeDelais+" ms");
-			System.out.println("Débit total de la simulation: "+debit_total_simu+" bits/ms");
+			System.out.println("Débit total de la simulation: "+debit_total_simu+" bits/ms || bit genere : "+nb_bit_moy_genere);
 			System.out.println("");
 			
 			try {
@@ -231,7 +231,7 @@ public class Main {
 			
 			
 			//on incrémente le nb de bit qu'on va générer au prochain tour
-			nb_bit_moy_genere = nb_bit_moy_genere + 10;
+			nb_bit_moy_genere = nb_bit_moy_genere + 2;
 			
 			//on réinitialise toute les variables
 			debitTotal = 0;

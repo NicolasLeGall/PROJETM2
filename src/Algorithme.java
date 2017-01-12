@@ -45,12 +45,20 @@ public class Algorithme {
 	
 	public int maxSNR(User user[], int actualTime){
 		int MaxU = 0;
-		int i, g, j, debitTotalTrame = 0;
+		int i, g, j, k, debitTotalTrame = 0;
 		int nouveau = 0;
 		int random_user = 0;
 		MRG32k3a mrg = new MRG32k3a();
-		int SNRSubcarrier_i[] = new int[128];
+		int[][] SNRSubcarrier_i = new int[15][128];
 		int SNRSubcarrier_MaxU[] = new int[128];
+		
+		for(i=0; i< 15;i++){
+			for(j=0; j<128; j++){
+				SNRSubcarrier_i[i][j] = user[i].getSNRSubcarrier_case(j);			
+			}	
+		}
+		i=0;
+		j=0;
 		
 	/*NB_SUBCARRIERS = 128 NB_TIME_SLOTS = 5 */
 		for(g = 0; g < NB_TIME_SLOTS ; g++){// parcours les timeslots, //tant que User.BufferVide > 0 ou que g<5, on transmet au debit actuel a cet user
@@ -69,10 +77,14 @@ public class Algorithme {
 				random_user=(int)(mrg.rand()*nb_user);
 				//parcour de la premier partie de la liste des utilisateurs
 				for (i = random_user; i < nb_user ; i++){
-					SNRSubcarrier_i = user[i].getSNRSubcarrier();
-					SNRSubcarrier_MaxU = user[MaxU].getSNRSubcarrier();
+					//SNRSubcarrier_i = user[i].getSNRSubcarrier();
+					//SNRSubcarrier_MaxU = user[MaxU].getSNRSubcarrier();
+					for(k=0; k<128; k++){
+						SNRSubcarrier_MaxU[k] = user[MaxU].getSNRSubcarrier_case(k);			
+					}
+					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
-					if((SNRSubcarrier_i[j] >= SNRSubcarrier_MaxU[j]) && (!(user[i].isBufferVide()))){
+					if((SNRSubcarrier_i[i][j] >= SNRSubcarrier_MaxU[j]) && (!(user[i].isBufferVide()))){
 						// si l'User a un meilleur debit, et que son buffer n'est pas vide: il devient le MaxUser 
 						MaxU = i;
 						nouveau = 1;
@@ -80,10 +92,14 @@ public class Algorithme {
 				}
 				//parcour de la seconde partie de la liste dse utilisateurs
 				for (i = 0; i < random_user ; i++){
-					SNRSubcarrier_i = user[i].getSNRSubcarrier();
-					SNRSubcarrier_MaxU = user[MaxU].getSNRSubcarrier();
+					//SNRSubcarrier_i = user[i].getSNRSubcarrier();
+					//SNRSubcarrier_MaxU = user[MaxU].getSNRSubcarrier();
+					for(k=0; k<128; k++){
+						SNRSubcarrier_MaxU[k] = user[MaxU].getSNRSubcarrier_case(k);			
+					}
+					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
-					if((SNRSubcarrier_i[j] >= SNRSubcarrier_MaxU[j]) && (!(user[i].isBufferVide()))){
+					if((SNRSubcarrier_i[i][j] >= SNRSubcarrier_MaxU[j]) && (!(user[i].isBufferVide()))){
 						// si l'User a un meilleur debit, et que son buffer n'est pas vide: il devient le MaxUser 
 						MaxU = i;
 						nouveau = 1;

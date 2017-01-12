@@ -128,9 +128,17 @@ public class User {
 	public int[] getSNRSubcarrier() {
 		return SNRSubcarrier;
 	}
-
+	
+	public int getSNRSubcarrier_case(int i) {
+		return SNRSubcarrier[i];
+	}
+	
 	public void setSNRSubcarrier(int[] sNRSubcarrier) {
 		SNRSubcarrier = sNRSubcarrier;
+	}
+	
+	public void setSNRSubcarrier_case(int[] sNRSubcarrier, int i) {
+		SNRSubcarrier[i] = sNRSubcarrier[i];
 	}
 
 	public Paquet getLePaquet() {

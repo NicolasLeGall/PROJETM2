@@ -12,7 +12,7 @@ public class Main {
 		int choixAlgo;
 		int i, j, g;
 		
-		int nb_bit_moy_genere = 200;
+		double nb_bit_moy_genere = 250;
 		
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
@@ -85,7 +85,7 @@ public class Main {
 		
 		
 		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
-		while(nb_bit_moy_genere < 400){
+		while(nb_bit_moy_genere < 450){
 				
 			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);
@@ -94,6 +94,14 @@ public class Main {
 			for(i = 0; i < nb_tours; i++){
 				/*On donne a chaque utilisateur un débit pour les 128 subcarrieur qui varie de 0 à 10 et qui a pour moyenne 6*/
 				initMatriceDebits(tab_user);	
+				
+				/*for(i=0; i< 15;i++){
+					System.out.println("\n user: "+i);
+					for(j=0; j<128; j++){
+						System.out.print(tab_user[i].getSNRSubcarrier_case(j)+" ");		
+					}	
+				}*/
+				
 				
 				/*Initialisation des paquets utilisateurs*/
 				/*Le temps de création d'un packet est donnée a chaque packet avec actualTime */
@@ -223,7 +231,7 @@ public class Main {
 			
 			
 			//on incrémente le nb de bit qu'on va générer au prochain tour
-			nb_bit_moy_genere = nb_bit_moy_genere +10;
+			nb_bit_moy_genere = nb_bit_moy_genere + 10;
 			
 			//on réinitialise toute les variables
 			debitTotal = 0;
@@ -296,8 +304,9 @@ public class Main {
 	
 				//somme = somme + SNRActuels[j];
 				//System.out.println("SNRActuels sur UR"+j+" = "+SNRActuels[j]);
+				user[i].setSNRSubcarrier_case(SNRActuels, j);
 			}
-			user[i].setSNRSubcarrier(SNRActuels);
+			
 			//System.out.println("moyenne = "+somme/128);
 		}
 	}

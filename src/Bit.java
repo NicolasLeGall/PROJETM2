@@ -4,7 +4,7 @@ public class Bit {
 	
 	
 	
-	public int produceBit(User user[], int actualTime, int nb_bit_moy_genere){
+	public int produceBit(User user[], int actualTime, double nb_bit_moy_genere){
 		int bitsGeneres = 0;
 		int total_bitsGeneres = 0;
 		MRG32k3a mrg = new MRG32k3a();
@@ -16,7 +16,7 @@ public class Bit {
 			continuer = true;
 
 			//c'est de la magie noire mais sa génére en moyenne 150.5 bit. Sa utilise une fonction logarithmique pour générer les bit. 0.00666666 c'est l'element qu'on change pour faire varier la moyenne ici sa fait 150.5 de moyenne
-			//bitsGeneres=(int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())));
+			//bitsGeneres=(int)((-1 / nb_bit_moy_genere) *(Math.log( 1 - mrg.rand())));
 			//Mais dans un premier temps pour simplifier on genre juste de maniére alétoire le nombre de bit. Avec comme moyenne nb_bit_moy_genere qui en envoiyer en paramatre
 			bitsGeneres=(int)(mrg.rand()*(nb_bit_moy_genere*2));
 		//System.out.println("utilisateur: "+i+" bit geneere "+bitsGeneres);

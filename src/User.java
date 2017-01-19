@@ -7,12 +7,12 @@ public class User {
 	private int seuilPDOR;
 	private int SNRmoyen;
 	private int SNRSubcarrier[] = new int[128];
-	private int sommePaquet;
-	private int sommeDelais;
-	private int sommeDelaisPDOR;
-	private int sommePaquets_consommer;
-	private int bit_en_trop;
-	private int sommeUR;
+	private long sommePaquet;
+	private long sommeDelais;
+	private long sommeDelaisPDOR;
+	private long sommePaquets_consommer;
+	private long bit_en_trop;
+	private long sommeUR;
 	private boolean bufferVide;
 	private Paquet lePaquet;
 	
@@ -33,7 +33,7 @@ public class User {
 	}
 	
 	
-	public int getSommeUR() {
+	public long getSommeUR() {
 		return sommeUR;
 	}
 
@@ -43,7 +43,7 @@ public class User {
 	}
 
 
-	public int getSommePaquets_consommer() {
+	public long getSommePaquets_consommer() {
 		return sommePaquets_consommer;
 	}
 
@@ -53,7 +53,7 @@ public class User {
 	}
 
 
-	public int getSommeDelaisPDOR() {
+	public long getSommeDelaisPDOR() {
 		return sommeDelaisPDOR;
 	}
 
@@ -63,7 +63,7 @@ public class User {
 	}
 
 
-	public int getSommeDelais() {
+	public long getSommeDelais() {
 		return sommeDelais;
 	}
 
@@ -73,7 +73,7 @@ public class User {
 	}
 
 
-	public int getSommePaquet() {
+	public long getSommePaquet() {
 		return sommePaquet;
 	}
 
@@ -93,7 +93,7 @@ public class User {
 	}
 
 
-	public int getBit_en_trop() {
+	public long getBit_en_trop() {
 		return bit_en_trop;
 	}
 	

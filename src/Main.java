@@ -12,7 +12,7 @@ public class Main {
 		int choixAlgo;
 		int i, j, g;
 		
-		double nb_bit_moy_genere = 340;
+		double nb_bit_moy_genere = 320;
 		
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
@@ -85,7 +85,7 @@ public class Main {
 		
 		
 		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
-		while(nb_bit_moy_genere < 370){
+		while(nb_bit_moy_genere < 390){
 				
 			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);

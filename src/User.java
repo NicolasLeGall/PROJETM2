@@ -38,7 +38,7 @@ public class User {
 	}
 
 
-	public void setSommeUR(int sommeUR) {
+	public void setSommeUR(long sommeUR) {
 		this.sommeUR = sommeUR;
 	}
 
@@ -48,7 +48,7 @@ public class User {
 	}
 
 
-	public void setSommePaquets_consommer(int sommePaquets_consommer) {
+	public void setSommePaquets_consommer(long sommePaquets_consommer) {
 		this.sommePaquets_consommer = sommePaquets_consommer;
 	}
 
@@ -58,7 +58,7 @@ public class User {
 	}
 
 
-	public void setSommeDelaisPDOR(int sommeDelaisPDOR) {
+	public void setSommeDelaisPDOR(long sommeDelaisPDOR) {
 		this.sommeDelaisPDOR = sommeDelaisPDOR;
 	}
 
@@ -68,7 +68,7 @@ public class User {
 	}
 
 
-	public void setSommeDelais(int sommeDelais) {
+	public void setSommeDelais(long sommeDelais) {
 		this.sommeDelais = sommeDelais;
 	}
 
@@ -78,7 +78,7 @@ public class User {
 	}
 
 
-	public void setSommePaquet(int sommePaquet) {
+	public void setSommePaquet(long sommePaquet) {
 		this.sommePaquet = sommePaquet;
 	}
 
@@ -97,7 +97,7 @@ public class User {
 		return bit_en_trop;
 	}
 	
-	public void setBit_en_trop(int bit_en_trop) {
+	public void setBit_en_trop(long bit_en_trop) {
 		this.bit_en_trop = bit_en_trop;
 	}
 	

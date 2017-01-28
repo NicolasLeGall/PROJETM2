@@ -14,9 +14,17 @@ public class Bit {
 		Paquet packet = new Paquet(-1, -1, null);
 		for(i = 0; i<15; i++){
 			continuer = true;
-
-			//c'est de la magie noire mais sa génére en moyenne 150.5 bit. Sa utilise une fonction logarithmique pour générer les bit. 0.00666666 c'est l'element qu'on change pour faire varier la moyenne ici sa fait 150.5 de moyenne
-			bitsGeneres=(int) (((int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())))*nb_bit_moy_genere)/150);
+			// on fait en sorte que quans un user tire une valeur il la garde pendant 3 tour.
+			if(user[i].getCompteur_bitsGeneres() == 0){
+				//c'est de la magie noire mais sa génére en moyenne 150.5 bit. Sa utilise une fonction logarithmique pour générer les bit. 0.00666666 c'est l'element qu'on change pour faire varier la moyenne ici sa fait 150.5 de moyenne
+				bitsGeneres=(int) (((int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())))*nb_bit_moy_genere)/150);
+				user[i].setBitsGeneres(bitsGeneres);	
+				user[i].setCompteur_bitsGeneres(3);
+			}else{
+				bitsGeneres = user[i].getBitsGeneres();
+				user[i].setCompteur_bitsGeneres(user[i].getCompteur_bitsGeneres()-1);
+			}
+			
 			//Mais dans un premier temps pour simplifier on genre juste de maniére alétoire le nombre de bit. Avec comme moyenne nb_bit_moy_genere qui en envoiyer en paramatre
 			//bitsGeneres=(int)(mrg.rand()*(nb_bit_moy_genere*2));
 		//System.out.println("utilisateur: "+i+" bit geneere "+bitsGeneres);

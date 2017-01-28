@@ -15,7 +15,12 @@ public class User {
 	private long sommeUR;
 	private boolean bufferVide;
 	private Paquet lePaquet;
+	private int bitsGeneres;
+	private int compteur_bitsGeneres;
 	
+
+
+
 	public User(int coop, int seuil){
 		
 		cooperation = coop;
@@ -24,6 +29,8 @@ public class User {
 		SNRmoyen = 0;
 		bit_en_trop = 0;
 		sommePaquet = 0;
+		bitsGeneres = 0;
+		compteur_bitsGeneres = 0;		
 		bufferVide = true;
 		// on initialise les 128 subcarrier et on considére que cette valeur est la meme sur les 5 time slot
 		for(int i = 0; i < 128; i++){
@@ -32,6 +39,24 @@ public class User {
 		
 	}
 	
+	public int getBitsGeneres() {
+		return bitsGeneres;
+	}
+
+
+	public void setBitsGeneres(int bitsGeneres) {
+		this.bitsGeneres = bitsGeneres;
+	}
+
+
+	public int getCompteur_bitsGeneres() {
+		return compteur_bitsGeneres;
+	}
+
+
+	public void setCompteur_bitsGeneres(int compteur_bitsGeneres) {
+		this.compteur_bitsGeneres = compteur_bitsGeneres;
+	}
 	
 	public long getSommeUR() {
 		return sommeUR;

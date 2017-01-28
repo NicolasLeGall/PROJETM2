@@ -12,7 +12,7 @@ public class Main {
 		int choixAlgo;
 		int i, j, g;
 		
-		double nb_bit_moy_genere = 320;
+		double nb_bit_moy_genere = 230;
 		
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
@@ -78,6 +78,7 @@ public class Main {
 			fichierSortie.println ("nb_tours="+nb_tours+";choixAlgo="+choixAlgo+";\n"); 
 			fichierSortie.println ("nb_bit_moy_genere;debit_total_simu;total_nbBitsgenere;debitTotal;delais_moyen;PDOR;res_sommeUR;bit_par_UR;taux_remplissage_buffer;nbPaquetsTotalsommePaquets_consommer;"); 
 			
+			fichierSortie.close();
 			
 		}catch (Exception e){
 			System.out.println(e.toString());
@@ -85,7 +86,7 @@ public class Main {
 		
 		
 		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
-		while(nb_bit_moy_genere < 390){
+		while(nb_bit_moy_genere < 410){
 				
 			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);
@@ -155,7 +156,7 @@ public class Main {
 				}
 				
 				
-				//+2 car on a 5 time slot et qu'on a dit que sa représenter 2secondes
+				//+2 car on a 5 time slot et qu'on a dit que sa représenter 2ms
 				actualTime += 2;
 	
 	
@@ -219,19 +220,31 @@ public class Main {
 			System.out.println("");
 			
 			try {
+				fw = new FileWriter (fichier, true);
+				bw = new BufferedWriter (fw);
+				fichierSortie = new PrintWriter (bw); 
 				//on écrit dans le fichier les resultat obtenue
 				fichierSortie.println (nb_bit_moy_genere+";"+debit_total_simu+";"+total_nbBitsgenere+";"+debitTotal+";"+delais_moyen+";"+PDOR+";"+res_sommeUR+";"+bit_par_UR+";"+taux_remplissage_buffer+";"+nbPaquetsTotalsommePaquets_consommer+";"); 
 				
-				
+				fichierSortie.close();
 			}catch (Exception e){
 				System.out.println(e.toString());
 			}
 			
 			
 			
+			if(delais_moyen > 1200){
+				//on incrémente le nb de bit qu'on va générer au prochain tour
+				nb_bit_moy_genere = nb_bit_moy_genere + 10;
+				
+				
+			}else{
+				//on incrémente le nb de bit qu'on va générer au prochain tour
+				nb_bit_moy_genere = nb_bit_moy_genere + 2;
+				
+			}
 			
-			//on incrémente le nb de bit qu'on va générer au prochain tour
-			nb_bit_moy_genere = nb_bit_moy_genere + 2;
+			
 			
 			//on réinitialise toute les variables
 			debitTotal = 0;
@@ -274,8 +287,7 @@ public class Main {
 			tab_user[14] = new User(100, 1000);
 			
 		}
-		//on quitte le fichier .csv
-		fichierSortie.close();
+		
 		System.out.println("Simulation terminer");
 	}
 

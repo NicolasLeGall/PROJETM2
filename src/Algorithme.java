@@ -5,12 +5,14 @@ public class Algorithme {
 	int NB_SUBCARRIERS = 128;
 	int nb_user = 15;
 	Bit bit = new Bit();
+	int SNRSubcarrier_currentUser[] = new int[128];
 	
-	public int RR(User user[], int actualTime){
+	public void RR(User user[], int actualTime){
+		int k = 0;
 		int i = 0;
 		int j = 0;
 		int currentUser = 0;
-		int debitTotalTrame = 0;
+		//int debitTotalTrame = 0;
 		int tamp = 0;
 
 		
@@ -18,9 +20,15 @@ public class Algorithme {
 			for(j = 0; j< NB_SUBCARRIERS ; j++){
 				while(tamp != -1){
 					// on regarde si l'utilisateur a quelque chose a consommer ( buffer vide = true quand il y a rien dans les paquets)
-					if(!(user[currentUser].isBufferVide())){
+					if((user[currentUser].getbit_restant_paquet() > 0) && (!user[currentUser].isBufferVide())){
 						//consumeBit renvois des valeurs de 0 à 10. renvois le nombre de bit consumer dans un packet d'un utilisateurs dans un time slot pour une subcarrier
-						debitTotalTrame = debitTotalTrame + bit.consumeBit(user[currentUser], j, actualTime);
+						//debitTotalTrame = debitTotalTrame + bit.consumeBit(user[currentUser], j, actualTime);
+						for(k=0; k<128; k++){
+							SNRSubcarrier_currentUser[k] = user[currentUser].getSNRSubcarrier_case(k);			
+						}
+						user[currentUser].setSommeUR(user[currentUser].getSommeUR()+1);
+						user[currentUser].setNb_bit_a_allouer(user[currentUser].getNb_bit_a_allouer() + SNRSubcarrier_currentUser[j]);
+						user[currentUser].setbit_restant_paquet(user[currentUser].getbit_restant_paquet()-SNRSubcarrier_currentUser[j]);
 						tamp = -1;
 					
 					//sinon on passe a l'user d'apres
@@ -39,8 +47,6 @@ public class Algorithme {
 			}
 		}
 
-		
-		return debitTotalTrame;
 	}
 	
 	public int maxSNR(User user[], int actualTime){
@@ -108,7 +114,7 @@ public class Algorithme {
 				/*printf("maxU = %d   ", MaxU);*/
 				//une fois qu'on a notre MaxU c'est a dire l'utilisateurs avec le meilleur SNR sur la subcarrier on lui fait envoyer ces bits
 				if(nouveau == 1){
-					debitTotalTrame = debitTotalTrame + bit.consumeBit(user[MaxU], j, actualTime);
+					//debitTotalTrame = debitTotalTrame + bit.consumeBit(user[MaxU], actualTime);
 				}
 				
 
@@ -183,7 +189,7 @@ public class Algorithme {
 				/*printf("maxU = %d   ", MaxU);*/
 				//une fois qu'on a notre MaxU c'est a dire l'utilisateurs avec le meilleur SNR sur la subcarrier on lui fait envoyer ces bits
 				if(nouveau == 1){
-					debitTotalTrame = debitTotalTrame + bit.consumeBit(user[MaxU], j, actualTime);
+				//	debitTotalTrame = debitTotalTrame + bit.consumeBit(user[MaxU], j, actualTime);
 				}
 				
 
@@ -301,7 +307,7 @@ public class Algorithme {
 				/*printf("maxU = %d   ", MaxU);*/
 				//une fois qu'on a notre MaxU c'est a dire l'utilisateurs avec le meilleur SNR sur la subcarrier on lui fait envoyer ces bits
 				if(nouveau == 1){
-					debitTotalTrame = debitTotalTrame + bit.consumeBit(user[MaxU], j, actualTime);
+				//	debitTotalTrame = debitTotalTrame + bit.consumeBit(user[MaxU], j, actualTime);
 				}
 				
 
@@ -421,7 +427,7 @@ public class Algorithme {
 				/*printf("maxU = %d   ", MaxU);*/
 				//une fois qu'on a notre MaxU c'est a dire l'utilisateurs avec le meilleur SNR sur la subcarrier on lui fait envoyer ces bits
 				if(nouveau == 1){
-					debitTotalTrame = debitTotalTrame + bit.consumeBit(user[MaxU], j, actualTime);
+				//	debitTotalTrame = debitTotalTrame + bit.consumeBit(user[MaxU], j, actualTime);
 				}
 				
 

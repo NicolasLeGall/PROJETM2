@@ -16,13 +16,22 @@ public class Bit {
 			continuer = true;
 			// on fait en sorte que quans un user tire une valeur il la garde pendant 3 tour.
 			if(user[i].getCompteur_bitsGeneres() == 0){
-				//c'est de la magie noire mais sa génére en moyenne 150.5 bit. Sa utilise une fonction logarithmique pour générer les bit. 0.00666666 c'est l'element qu'on change pour faire varier la moyenne ici sa fait 150.5 de moyenne
-				bitsGeneres=(int) (((int)((-1 / 0.00666666) *(Math.log( 1 - mrg.rand())))*nb_bit_moy_genere)/150);
-				user[i].setBitsGeneres(bitsGeneres);	
+				//bitsGeneres est la variable qui contient le nb de bit que l'utilisateur va génére et mettre dans ces paquets
+				//on utilise une lois exponentiel pour généré les bit. nb_bit_moy_genere c'est la moyenne des valeurs généré (dans la formule il faut qu'il soit négatif). mrg.rand() c'est l'apelle a MRG32k3a une fonctionn rand
+				bitsGeneres=(int) ((int)((-nb_bit_moy_genere) *(Math.log( 1 - mrg.rand()))));
+				//on sauvegarde pour chaque user bitsGeneres
+				user[i].setBitsGeneres(bitsGeneres);
+				//on définit pendant combien de tour il va garder cette valeur
 				user[i].setCompteur_bitsGeneres(3);
-			}else{
-				bitsGeneres = user[i].getBitsGeneres();
+				//je compte le nombre de bit j'ai dans mes paquet (c'est pour faire fonctionner mon programme ça
+				user[i].setbit_restant_paquet(user[i].getbit_restant_paquet()+bitsGeneres);
+			}else{// si getCompteur_bitsGeneres() est != de 0
+				//on tire une valeur avec comme moyenne la valeur qu'on a tier dans la premire parti du if() (bitsGeneres)
+				bitsGeneres = (int) ((int)((-user[i].getBitsGeneres()) *(Math.log( 1 - mrg.rand()))));
+				//on décrémente notre compteur de tour
 				user[i].setCompteur_bitsGeneres(user[i].getCompteur_bitsGeneres()-1);
+				//je compte le nombre de bit j'ai dans mes paquet (c'est pour faire fonctionner mon programme ça
+				user[i].setbit_restant_paquet(user[i].getbit_restant_paquet()+bitsGeneres);
 			}
 			
 			//Mais dans un premier temps pour simplifier on genre juste de maniére alétoire le nombre de bit. Avec comme moyenne nb_bit_moy_genere qui en envoiyer en paramatre
@@ -40,7 +49,7 @@ public class Bit {
 	        	if(user[i].isBufferVide()){
 					
 					// si le nombre de bit généré est plus grand que la taille d'un paquet
-					if(user[i].getBit_en_trop() > 40){
+					if(user[i].getBit_en_trop() >= 40){
 						//on dit que maintenant le buffer sera plus vide
 						user[i].setBufferVide(false);
 						//en réaliter le buffer n'est jamais vide il a forcement un paquet donc on met nos valeur dedans
@@ -61,7 +70,7 @@ public class Bit {
 						packet = packet.getNextPaquet();
 					}
 					// si le nombre de bit généré est plus grand que la taille d'un paquet
-					if(user[i].getBit_en_trop() > 40){
+					if(user[i].getBit_en_trop() >= 40){
 						//on créer un nouveau paquet et on met dedans 100bit et sa date de création
 						packet.setNextPaquet(new Paquet(-1, -1, null));
 						packet.getNextPaquet().setDateCreation(actualTime);
@@ -85,7 +94,73 @@ public class Bit {
 		return total_bitsGeneres;
 	}
 	
-	public int consumeBit(User user, int subCarrier, int actualTime){
+	public int consumeBit(User user[], int actualTime){
+		int bitConsommes_total_user = 0;
+		int i =0;
+		int nb_bit_a_consommer = 0;
+		int nb_bit_relayer = 0;
+		for(i = 0; i<15; i++){
+			//on applique le % de cooperation pour savoir le nombre de bit qu'on garde et le nombre qu'on relay
+			if(user[i].getCooperation() != 100){
+				nb_bit_a_consommer = (int)(user[i].getNb_bit_a_allouer()*(100.0/(float)(user[i].getCooperation())));
+				//System.out.println("coop: "+(float)(user[i].getCooperation())+" entre "+user[i].getNb_bit_a_allouer()+ " sortie "+nb_bit_a_consommer);
+			}else{
+				nb_bit_a_consommer = user[i].getNb_bit_a_allouer();
+				//System.out.println(nb_bit_a_consommer);
+			}
+			//debit de la simulation
+			//bitConsommes_total_user = bitConsommes_total_user + user[i].getNb_bit_a_allouer();
+			//debit une fois les bit relayer
+			bitConsommes_total_user = bitConsommes_total_user + nb_bit_a_consommer;
+			//calcul du nombre de bit relayer
+			nb_bit_relayer = user[i].getNb_bit_a_allouer() - nb_bit_a_consommer;
+			user[i].setSomme_nb_bit_relayer(user[i].getSomme_nb_bit_relayer()+nb_bit_relayer);
+			
+			//System.out.println(nb_bit_a_consommer);
+			while(nb_bit_a_consommer > 0){
+				
+				//Si on consomme plus de bits que le paquet en contient. C'est a dire qu'on va consommer tout les bit du paquet et meme si possible quelque un du paquet suivant
+				if(user[i].getLePaquet().getBitsRestants() <= nb_bit_a_consommer){
+					
+					//Mise à jour pour les statistiques. Comme le paquet est supprimer on regarde sont delais entre le moment ou il a était crée et le moment ou il a était supprimer
+					user[i].setSommeDelais(user[i].getSommeDelais() + (actualTime - (user[i].getLePaquet().getDateCreation())));  
+					/*si le delais est supérieurs a seuil du PDOR Pour le calcul du PDOR*/
+					if((actualTime - (user[i].getLePaquet().getDateCreation())) >= user[i].getSeuilPDOR()){
+						//on incremente la varaible qui compte le nombre de paquet qui sont arriver avec le seuil du PDOR qu'on a fixer
+						user[i].setSommeDelaisPDOR(user[i].getSommeDelaisPDOR()+1);
+					}
+					// si il reste plusieurs packet dans la chaine exemple de chaine (64=>100=>100=>NULL)
+					if((user[i].getLePaquet().getNextPaquet() != null)){
+						//System.out.println("plusieur"+nb_bit_a_consommer);
+						user[i].setSommePaquets_consommer(user[i].getSommePaquets_consommer()+1);
+						nb_bit_a_consommer = nb_bit_a_consommer - user[i].getLePaquet().getBitsRestants();
+						
+						user[i].setLePaquet(user[i].getLePaquet().getNextPaquet());
+					}else{//si il rester qu'un packet dans la chaine. Le nb de bit consommer c'est le nb de bit qu'il rester dans le paquet. On supprimer pas le paquet on met juste ces variable à 0.
+						//System.out.println("un seul"+user[i].getLePaquet().getBitsRestants());
+						user[i].setSommePaquets_consommer(user[i].getSommePaquets_consommer()+1);
+						//nb_bit_a_consommer = nb_bit_a_consommer - user[i].getLePaquet().getBitsRestants();
+						nb_bit_a_consommer = 0;
+						user[i].getLePaquet().setBitsRestants(0);
+						user[i].getLePaquet().setDateCreation(-1);
+						user[i].setBufferVide(true);
+				//System.out.println(bitConsommes);
+					}
+				}else{//Si il y a assez de bits dans ce paquet. C'est par ici qu'on passe 5% du temps le reste de la fonctino c'est des cas particulier
+					//on fait bit_restant - SNRSubcarrier dans le paquet. 
+					//System.out.println("else"+nb_bit_a_consommer);
+					user[i].getLePaquet().setBitsRestants((user[i].getLePaquet().getBitsRestants())-(nb_bit_a_consommer));
+					nb_bit_a_consommer = 0;				
+				}
+			}
+			
+			user[i].setNb_bit_a_allouer(0);
+			// On retourne le nombre de bits consommer 
+		}
+		return bitConsommes_total_user;
+	}
+	
+/*	public int consumeBit(User user, int subCarrier, int actualTime){
 		int bitConsommes = 0;
 
 		int SNRSubcarrier[] = user.getSNRSubcarrier();
@@ -94,7 +169,7 @@ public class Bit {
 		if(user.getLePaquet().getBitsRestants() <= SNRSubcarrier[subCarrier]){
 			//Mise à jour pour les statistiques. Comme le paquet est supprimer on regarde sont delais entre le moment ou il a était crée et le moment ou il a était supprimer
 			user.setSommeDelais(user.getSommeDelais() + (actualTime - (user.getLePaquet().getDateCreation())));  
-			/*si le delais est supérieurs a seuil du PDOR Pour le calcul du PDOR*/
+			//si le delais est supérieurs a seuil du PDOR Pour le calcul du PDOR
 			if((actualTime - (user.getLePaquet().getDateCreation())) >= user.getSeuilPDOR()){
 				//on incremente la varaible qui compte le nombre de paquet qui sont arriver avec le sueil du PDOR qu'on a fixer
 				user.setSommeDelaisPDOR(user.getSommeDelaisPDOR()+1);
@@ -126,5 +201,5 @@ public class Bit {
 		// On retourne le nombre de bits consommer 
 		
 		return bitConsommes;
-	}
+	}*/
 }

@@ -12,35 +12,36 @@ public class Main {
 		int choixAlgo;
 		int i, j, g;
 		
-		double nb_bit_moy_genere = 230;
+		double nb_bit_moy_genere = 2;
 		
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
 		Scanner scanInt = new Scanner(System.in);
 		User tab_user[] = new User[15];
 		
-		tab_user[0] = new User(0, 80);
-		tab_user[1] = new User(0, 250);
-		tab_user[2] = new User(0, 1000);
+		tab_user[0] = new User(100, 80);
+		tab_user[1] = new User(100, 250);
+		tab_user[2] = new User(100, 1000);
 	
-		tab_user[3] = new User(25, 80);
-		tab_user[4] = new User(25, 250);
-		tab_user[5] = new User(25, 1000);
+		tab_user[3] = new User(125, 80);
+		tab_user[4] = new User(125, 250);
+		tab_user[5] = new User(125, 1000);
 		
-		tab_user[6] = new User(50, 80);
-		tab_user[7] = new User(50, 250);
-		tab_user[8] = new User(50, 1000);
+		tab_user[6] = new User(150, 80);
+		tab_user[7] = new User(150, 250);
+		tab_user[8] = new User(150, 1000);
 		
-		tab_user[9] = new User(75, 80);
-		tab_user[10] = new User(75, 250);
-		tab_user[11] = new User(75, 1000);
+		tab_user[9] = new User(175, 80);
+		tab_user[10] = new User(175, 250);
+		tab_user[11] = new User(175, 1000);
 		
-		tab_user[12] = new User(100, 80);
-		tab_user[13] = new User(100, 250);
-		tab_user[14] = new User(100, 1000);
+		tab_user[12] = new User(200, 80);
+		tab_user[13] = new User(200, 250);
+		tab_user[14] = new User(200, 1000);
 		
 		
 		int actualTime = 0;
+		int bit_restant = 0;
 		double debitTotal = 0;
 		double nbBitsgenere = 0;
 		double debit_total_simu = 0;
@@ -86,7 +87,7 @@ public class Main {
 		
 		
 		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
-		while(nb_bit_moy_genere < 410){
+		while(nb_bit_moy_genere < 230){
 				
 			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);
@@ -111,23 +112,24 @@ public class Main {
 				
 				
 				//listage du contenue des paquets
-			/*	for(j=0; j<15;j++){
+				/*System.out.println("Apres creation des bits");
+				for(j=0; j<15;j++){
 					System.out.println("utilisateur: "+j+" bit en trop "+tab_user[j].getBit_en_trop());
 					packet = tab_user[j].getLePaquet();
-					System.out.print(packet.getBitsRestants()+"=>");
+					System.out.print(packet.getBitsRestants()+"("+(actualTime-packet.getDateCreation())+")=>");
 					while(packet.getNextPaquet() != null){
 						//System.out.println("test3");
 						packet = packet.getNextPaquet();
-						System.out.print(packet.getBitsRestants()+"=>");
+						System.out.print(packet.getBitsRestants()+"("+(actualTime-packet.getDateCreation())+")=>");
 					}
 					System.out.println();
 				}
-				System.out.println();
-					*/
+				System.out.println();*/
+					
 	
 				/*Application de l'algorithme et ôtage des bits dans les paquets*/
 				if(choixAlgo == 1){
-					debitTotal += scheduler.RR(tab_user, actualTime);
+					scheduler.RR(tab_user, actualTime);
 				}
 				else if(choixAlgo == 2){
 					debitTotal += scheduler.maxSNR(tab_user, actualTime);
@@ -145,34 +147,40 @@ public class Main {
 					System.out.println("choix de l'algorithme mauvais. Arret. \n");
 				}
 			
+				debitTotal += gestion_de_bit.consumeBit(tab_user, actualTime);
 				
 				/*Calcul du nombre de bit qui reste dans les paquets non envoyer pour chaque utilisateurs*/
 				for(g = 0; g < 15; g++){
 					packet = tab_user[g].getLePaquet();
-					while(packet.getNextPaquet() != null){
+					while(packet != null){
+						bit_restant = bit_restant + packet.getBitsRestants();
+						tab_user[g].setbit_restant_paquet(bit_restant);
 						somme_bitsRestants = somme_bitsRestants + packet.getBitsRestants();
 						packet = packet.getNextPaquet();
 					}
+					bit_restant=0;
 				}
 				
+				/*System.out.println("apres consommation");
+				//listage du contenue des paquets
+				for(j=0; j<15;j++){
+					System.out.println("utilisateur: "+j+" bit en trop "+tab_user[j].getBit_en_trop()+" bit restant dans paquet "+tab_user[j].getbit_restant_paquet());
+					packet = tab_user[j].getLePaquet();
+					System.out.print(packet.getBitsRestants()+"("+(actualTime-packet.getDateCreation())+")=>");
+					while(packet.getNextPaquet() != null){
+						//System.out.println("test3");
+						packet = packet.getNextPaquet();
+						System.out.print(packet.getBitsRestants()+"("+(actualTime-packet.getDateCreation())+")=>");
+					}
+					System.out.println();
+				}*/
 				
 				//+2 car on a 5 time slot et qu'on a dit que sa représenter 2ms
 				actualTime += 2;
 	
 	
-				/*
-				//listage du contenue des paquets
-				for(j=0; j<15;j++){
-					System.out.println("utilisateur: "+j+" bit en trop "+tab_user[j].getBit_en_trop());
-					packet = tab_user[j].getLePaquet();
-					System.out.print(packet.getBitsRestants()+"=>");
-					while(packet.getNextPaquet() != null){
-						//System.out.println("test3");
-						packet = packet.getNextPaquet();
-						System.out.print(packet.getBitsRestants()+"=>");
-					}
-					System.out.println();
-				}*/
+				
+	
 				
 			}
 			//parcour des utilisateurs
@@ -236,8 +244,6 @@ public class Main {
 			if(delais_moyen > 1200){
 				//on incrémente le nb de bit qu'on va générer au prochain tour
 				nb_bit_moy_genere = nb_bit_moy_genere + 10;
-				
-				
 			}else{
 				//on incrémente le nb de bit qu'on va générer au prochain tour
 				nb_bit_moy_genere = nb_bit_moy_genere + 2;
@@ -266,25 +272,25 @@ public class Main {
 			
 			actualTime = 0;
 			
-			tab_user[0] = new User(0, 80);
-			tab_user[1] = new User(0, 250);
-			tab_user[2] = new User(0, 1000);
+			tab_user[0] = new User(100, 80);
+			tab_user[1] = new User(100, 250);
+			tab_user[2] = new User(100, 1000);
 		
-			tab_user[3] = new User(25, 80);
-			tab_user[4] = new User(25, 250);
-			tab_user[5] = new User(25, 1000);
+			tab_user[3] = new User(125, 80);
+			tab_user[4] = new User(125, 250);
+			tab_user[5] = new User(125, 1000);
 			
-			tab_user[6] = new User(50, 80);
-			tab_user[7] = new User(50, 250);
-			tab_user[8] = new User(50, 1000);
+			tab_user[6] = new User(150, 80);
+			tab_user[7] = new User(150, 250);
+			tab_user[8] = new User(150, 1000);
 			
-			tab_user[9] = new User(75, 80);
-			tab_user[10] = new User(75, 250);
-			tab_user[11] = new User(75, 1000);
+			tab_user[9] = new User(175, 80);
+			tab_user[10] = new User(175, 250);
+			tab_user[11] = new User(175, 1000);
 			
-			tab_user[12] = new User(100, 80);
-			tab_user[13] = new User(100, 250);
-			tab_user[14] = new User(100, 1000);
+			tab_user[12] = new User(200, 80);
+			tab_user[13] = new User(200, 250);
+			tab_user[14] = new User(200, 1000);
 			
 		}
 		

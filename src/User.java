@@ -11,12 +11,15 @@ public class User {
 	private long sommeDelais;
 	private long sommeDelaisPDOR;
 	private long sommePaquets_consommer;
+	private long somme_nb_bit_relayer;
 	private long bit_en_trop;
 	private long sommeUR;
 	private boolean bufferVide;
 	private Paquet lePaquet;
 	private int bitsGeneres;
 	private int compteur_bitsGeneres;
+	private int nb_bit_a_allouer;
+	private long bit_restant_paquet;
 	
 
 
@@ -30,7 +33,10 @@ public class User {
 		bit_en_trop = 0;
 		sommePaquet = 0;
 		bitsGeneres = 0;
-		compteur_bitsGeneres = 0;		
+		compteur_bitsGeneres = 0;	
+		nb_bit_a_allouer = 0;
+		somme_nb_bit_relayer = 0;
+		bit_restant_paquet=0;
 		bufferVide = true;
 		// on initialise les 128 subcarrier et on considére que cette valeur est la meme sur les 5 time slot
 		for(int i = 0; i < 128; i++){
@@ -39,6 +45,33 @@ public class User {
 		
 	}
 	
+	
+	public long getbit_restant_paquet() {
+		return bit_restant_paquet;
+	}
+
+
+	public void setbit_restant_paquet(long bit_restant_paquet) {
+		this.bit_restant_paquet = bit_restant_paquet;
+	}
+
+
+	public long getSomme_nb_bit_relayer() {
+		return somme_nb_bit_relayer;
+	}
+
+	public void setSomme_nb_bit_relayer(long somme_nb_bit_relayer) {
+		this.somme_nb_bit_relayer = somme_nb_bit_relayer;
+	}
+
+	public int getNb_bit_a_allouer() {
+		return nb_bit_a_allouer;
+	}
+
+	public void setNb_bit_a_allouer(int nb_bit_a_consommer) {
+		this.nb_bit_a_allouer = nb_bit_a_consommer;
+	}
+
 	public int getBitsGeneres() {
 		return bitsGeneres;
 	}

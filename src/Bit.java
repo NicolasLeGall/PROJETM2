@@ -94,7 +94,8 @@ public class Bit {
 		return total_bitsGeneres;
 	}
 	
-	public int consumeBit(User user[], int actualTime){
+	public int[] consumeBit(User user[], int actualTime){
+		int debit[] = {0,0,0};
 		int bitConsommes_total_user = 0;
 		int i =0;
 		int nb_bit_a_consommer = 0;
@@ -109,11 +110,11 @@ public class Bit {
 				//System.out.println(nb_bit_a_consommer);
 			}
 			//debit de la simulation
-			//bitConsommes_total_user = bitConsommes_total_user + user[i].getNb_bit_a_allouer();
+			debit[0] = debit[0] + user[i].getNb_bit_a_allouer();
 			//debit une fois les bit relayer
-			bitConsommes_total_user = bitConsommes_total_user + nb_bit_a_consommer;
+			debit[1] = debit[1] + nb_bit_a_consommer;
 			//calcul du nombre de bit relayer
-			nb_bit_relayer = user[i].getNb_bit_a_allouer() - nb_bit_a_consommer;
+			debit[2] = debit[2] + (user[i].getNb_bit_a_allouer() - nb_bit_a_consommer);
 			user[i].setSomme_nb_bit_relayer(user[i].getSomme_nb_bit_relayer()+nb_bit_relayer);
 			
 			//System.out.println(nb_bit_a_consommer);
@@ -157,7 +158,8 @@ public class Bit {
 			user[i].setNb_bit_a_allouer(0);
 			// On retourne le nombre de bits consommer 
 		}
-		return bitConsommes_total_user;
+		
+		return debit;
 	}
 	
 /*	public int consumeBit(User user, int subCarrier, int actualTime){

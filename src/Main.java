@@ -12,7 +12,7 @@ public class Main {
 		int choixAlgo;
 		int i, j, g;
 		
-		double nb_bit_moy_genere = 2;
+		double nb_bit_moy_genere = 120;
 		
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
@@ -42,9 +42,14 @@ public class Main {
 		
 		int actualTime = 0;
 		int bit_restant = 0;
+		int debit[] = null;
 		double debitTotal = 0;
+		double debit_relayer = 0;
+		double debit_user = 0;
 		double nbBitsgenere = 0;
 		double debit_total_simu = 0;
+		double debit_total_simu_user = 0;
+		double debit_total_simu_relayer = 0;
 		double total_nbBitsgenere = 0;
 		double sommeDelais = 0 ;
 		double nbPaquetsTotal = 0 ; 
@@ -77,7 +82,7 @@ public class Main {
 		try {
 			
 			fichierSortie.println ("nb_tours="+nb_tours+";choixAlgo="+choixAlgo+";\n"); 
-			fichierSortie.println ("nb_bit_moy_genere;debit_total_simu;total_nbBitsgenere;debitTotal;delais_moyen;PDOR;res_sommeUR;bit_par_UR;taux_remplissage_buffer;nbPaquetsTotalsommePaquets_consommer;"); 
+			fichierSortie.println ("nb_bit_moy_genere;debit_total_simu;debit_user;debit_relayer;total_nbBitsgenere;debitTotal;delais_moyen;PDOR;res_sommeUR;bit_par_UR;taux_remplissage_buffer;nbPaquetsTotalsommePaquets_consommer;"); 
 			
 			fichierSortie.close();
 			
@@ -87,7 +92,7 @@ public class Main {
 		
 		
 		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
-		while(nb_bit_moy_genere < 230){
+		while(nb_bit_moy_genere < 300){
 				
 			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);
@@ -129,25 +134,29 @@ public class Main {
 	
 				/*Application de l'algorithme et ôtage des bits dans les paquets*/
 				if(choixAlgo == 1){
-					scheduler.RR(tab_user, actualTime);
+					scheduler.RR(tab_user, actualTime); //congestion a partir de 150
 				}
 				else if(choixAlgo == 2){
-					debitTotal += scheduler.maxSNR(tab_user, actualTime);
+					 scheduler.maxSNR(tab_user, actualTime);//congestion a partir de 210
 				}
 				else if(choixAlgo == 3){
-					debitTotal += scheduler.WFO(tab_user, actualTime);
+					 scheduler.WFO(tab_user, actualTime);//congestion a partir de 216
 				}
 				else if(choixAlgo == 4){
-					debitTotal += scheduler.CEI(tab_user, actualTime);
+					 scheduler.CEI(tab_user, actualTime);//congestion a partir de 160
 				}
 				else if(choixAlgo == 5){
-					debitTotal += scheduler.CEI_WFO(tab_user, actualTime);
+					 scheduler.CEI_WFO(tab_user, actualTime);//congestion a partir de 166
 				}
 				else{
 					System.out.println("choix de l'algorithme mauvais. Arret. \n");
 				}
 			
-				debitTotal += gestion_de_bit.consumeBit(tab_user, actualTime);
+				debit = gestion_de_bit.consumeBit(tab_user, actualTime);
+				
+				debitTotal +=debit[0];
+				debit_user +=debit[1];
+				debit_relayer +=debit[2];
 				
 				/*Calcul du nombre de bit qui reste dans les paquets non envoyer pour chaque utilisateurs*/
 				for(g = 0; g < 15; g++){
@@ -209,6 +218,8 @@ public class Main {
 			taux_remplissage_buffer = somme_bitsRestants/actualTime;
 			res_sommeUR = ((double)(user_sommeUR)/(double)(5*128*nb_tours))*100;
 			debit_total_simu = debitTotal/actualTime;
+			debit_total_simu_user = debit_user/actualTime;
+			debit_total_simu_relayer = debit_relayer/actualTime;
 			delais_moyen = sommeDelais/(nbPaquetsTotalsommePaquets_consommer);
 			PDOR=((double)nbPaquetsTotalPDOR/((double)(nbPaquetsTotalsommePaquets_consommer)))*100;
 			if(nbPaquetsTotalsommePaquets_consommer == 0){
@@ -225,6 +236,7 @@ public class Main {
 			System.out.println("Nombre total de Bits genere : "+total_nbBitsgenere+" bits || consommer : "+debitTotal+" bits");
 			System.out.println("Delai moyen : "+delais_moyen+" ms  || Somme des delais: "+sommeDelais+" ms");
 			System.out.println("Débit total de la simulation: "+debit_total_simu+" bits/ms || bit genere : "+nb_bit_moy_genere);
+			System.out.println("Débit user: "+debit_total_simu_user+" bits/ms || Débit relayer: "+debit_total_simu_relayer);
 			System.out.println("");
 			
 			try {
@@ -232,7 +244,7 @@ public class Main {
 				bw = new BufferedWriter (fw);
 				fichierSortie = new PrintWriter (bw); 
 				//on écrit dans le fichier les resultat obtenue
-				fichierSortie.println (nb_bit_moy_genere+";"+debit_total_simu+";"+total_nbBitsgenere+";"+debitTotal+";"+delais_moyen+";"+PDOR+";"+res_sommeUR+";"+bit_par_UR+";"+taux_remplissage_buffer+";"+nbPaquetsTotalsommePaquets_consommer+";"); 
+				fichierSortie.println (nb_bit_moy_genere+";"+debit_total_simu+";"+debit_total_simu_user+";"+debit_total_simu_relayer+";"+total_nbBitsgenere+";"+debitTotal+";"+delais_moyen+";"+PDOR+";"+res_sommeUR+";"+bit_par_UR+";"+taux_remplissage_buffer+";"+nbPaquetsTotalsommePaquets_consommer+";"); 
 				
 				fichierSortie.close();
 			}catch (Exception e){
@@ -241,7 +253,7 @@ public class Main {
 			
 			
 			
-			if(delais_moyen > 1200){
+			if(delais_moyen > 1800){
 				//on incrémente le nb de bit qu'on va générer au prochain tour
 				nb_bit_moy_genere = nb_bit_moy_genere + 10;
 			}else{
@@ -253,7 +265,14 @@ public class Main {
 			
 			
 			//on réinitialise toute les variables
+			debit[0] = 0;
+			debit[1] = 0;
+			debit[2] = 0;
 			debitTotal = 0;
+			debit_user = 0;
+			debit_relayer = 0;
+			debit_total_simu_user = 0;
+			debit_total_simu_relayer = 0;
 			nbBitsgenere = 0;
 			debit_total_simu = 0;
 			total_nbBitsgenere = 0;

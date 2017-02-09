@@ -242,20 +242,20 @@ public class Algorithme {
 					//SNRSubcarrier_MaxU = user[MaxU].getSNRSubcarrier();
 		
 					Rk_i = SNRSubcarrier_i[i][j];
-	                Dk_i = Rk_i - ((((double)(user[i].getCooperation())/200.0))*Rk_i); 
+	                Dk_i = Rk_i - ((((double)(user[i].getCooperation()-100)/200.0))*Rk_i); 
 	                if(Dk_i==0){
 	                	Dk_i=0.1;
 	                }
-	                formule_i = (Rk_i/Dk_i)*Tk_i;
+	                formule_i = SNRSubcarrier_i[i][j]*(Rk_i/Dk_i)*Tk_i;
 	                
-	                //System.out.println("SNR "+SNRSubcarrier_i[i][j]+" coop: "+(((user[i].getCooperation())/200.0))+" *rk_i "+Rk_i+ " Dk_i "+Dk_i+" formule_i "+formule_i);
+	                //System.out.println("SNR "+SNRSubcarrier_i[i][j]+" coop: "+(((user[i].getCooperation()-100)/200.0))+" *rk_i "+Rk_i+ " Dk_i "+Dk_i+" formule_i "+formule_i);
 	                
 	                Rk_MaxU = user[MaxU].getSNRSubcarrier_case(j);
-	                Dk_MaxU = Rk_MaxU - (((double)(user[MaxU].getCooperation())/200.0))*Rk_MaxU; 
+	                Dk_MaxU = Rk_MaxU - (((double)(user[MaxU].getCooperation()-100)/200.0))*Rk_MaxU; 
 	                if(Dk_MaxU==0){
 	                	Dk_MaxU=0.1;
 	                }
-	                formule_MaxU = (Rk_MaxU/Dk_MaxU)*Tk_MaxU;
+	                formule_MaxU = user[MaxU].getSNRSubcarrier_case(j)*(Rk_MaxU/Dk_MaxU)*Tk_MaxU;
 					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
 					if((formule_i >= formule_MaxU) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){
@@ -271,20 +271,20 @@ public class Algorithme {
 				
 					
 					Rk_i = SNRSubcarrier_i[i][j];
-	                Dk_i = Rk_i - ((((double)(user[i].getCooperation())/200.0))*Rk_i); 
+	                Dk_i = Rk_i - ((((double)(user[i].getCooperation()-100)/200.0))*Rk_i); 
 	                if(Dk_i==0){
 	                	Dk_i=0.1;
 	                }
-	                formule_i = (Rk_i/Dk_i)*Tk_i;
+	                formule_i = SNRSubcarrier_i[i][j]*(Rk_i/Dk_i)*Tk_i;
 	                
 	                //System.out.println("SNR "+SNRSubcarrier_i[i][j]+" coop: "+(((user[i].getCooperation())/200.0))+" *rk_i "+Rk_i+ " Dk_i "+Dk_i+" formule_i "+formule_i);
 	                
 	                Rk_MaxU = user[MaxU].getSNRSubcarrier_case(j);
-	                Dk_MaxU = Rk_MaxU - (((double)(user[MaxU].getCooperation())/200.0))*Rk_MaxU; 
+	                Dk_MaxU = Rk_MaxU - (((double)(user[MaxU].getCooperation()-100)/200.0))*Rk_MaxU; 
 	                if(Dk_MaxU==0){
 	                	Dk_MaxU=0.1;
 	                }
-	                formule_MaxU = (Rk_MaxU/Dk_MaxU)*Tk_MaxU;
+	                formule_MaxU = user[MaxU].getSNRSubcarrier_case(j)*(Rk_MaxU/Dk_MaxU)*Tk_MaxU;
 					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
 					if((formule_i >= formule_MaxU) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){
@@ -358,21 +358,21 @@ public class Algorithme {
 				
 					
 					//(SNRSubcarrier_i[i][j])*(1+1000000*(user[i].getSommeDelaisPDOR()^3)
-					Rk_i = (int) ((SNRSubcarrier_i[i][j])*(1+1000000*(user[i].getPDOR()*user[i].getPDOR()*user[i].getPDOR())));
-	                Dk_i = Rk_i - ((((double)(user[i].getCooperation())/200.0))*Rk_i); 
+					Rk_i = SNRSubcarrier_i[i][j];
+	                Dk_i = Rk_i - ((((double)(user[i].getCooperation()-100)/200.0))*Rk_i); 
 	                if(Dk_i==0){
 	                	Dk_i=0.1;
 	                }
-	                formule_i = (Rk_i/Dk_i)*Tk_i;
+	                formule_i = (1+1000000*(user[i].getPDOR()*user[i].getPDOR()*user[i].getPDOR()))*(SNRSubcarrier_i[i][j]*(Rk_i/Dk_i)*Tk_i);
 	                
 	                //System.out.println("SNR "+SNRSubcarrier_i[i][j]+" coop: "+(((user[i].getCooperation())/200.0))+" *rk_i "+Rk_i+ " Dk_i "+Dk_i+" formule_i "+formule_i);
 	                
-	                Rk_MaxU =  (int) ((user[MaxU].getSNRSubcarrier_case(j))*(1+1000000*(user[MaxU].getPDOR()*user[MaxU].getPDOR()*user[MaxU].getPDOR())));
-	                Dk_MaxU = Rk_MaxU - (((double)(user[MaxU].getCooperation())/200.0))*Rk_MaxU; 
+	                Rk_MaxU =  user[MaxU].getSNRSubcarrier_case(j);
+	                Dk_MaxU = Rk_MaxU - (((double)(user[MaxU].getCooperation()-100)/200.0))*Rk_MaxU; 
 	                if(Dk_MaxU==0){
 	                	Dk_MaxU=0.1;
 	                }
-	                formule_MaxU = (Rk_MaxU/Dk_MaxU)*Tk_MaxU;
+	                formule_MaxU = (1+1000000*(user[MaxU].getPDOR()*user[MaxU].getPDOR()*user[MaxU].getPDOR()))*(user[MaxU].getSNRSubcarrier_case(j)*(Rk_MaxU/Dk_MaxU)*Tk_MaxU);
 					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
 					if((formule_i >= formule_MaxU) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){
@@ -388,21 +388,21 @@ public class Algorithme {
 				
 					
 					//(SNRSubcarrier_i[i][j])*(1+1000000*(user[i].getSommeDelaisPDOR()^3)
-					Rk_i = (int) ((SNRSubcarrier_i[i][j])*(1+1000000*(user[i].getPDOR()*user[i].getPDOR()*user[i].getPDOR())));
-	                Dk_i = Rk_i - ((((double)(user[i].getCooperation())/200.0))*Rk_i); 
+					Rk_i = SNRSubcarrier_i[i][j];
+	                Dk_i = Rk_i - ((((double)(user[i].getCooperation()-100)/200.0))*Rk_i); 
 	                if(Dk_i==0){
 	                	Dk_i=0.1;
 	                }
-	                formule_i = (Rk_i/Dk_i)*Tk_i;
+	                formule_i = (1+1000000*(user[i].getPDOR()*user[i].getPDOR()*user[i].getPDOR()))*(SNRSubcarrier_i[i][j]*(Rk_i/Dk_i)*Tk_i);
 	                
 	                //System.out.println("SNR "+SNRSubcarrier_i[i][j]+" coop: "+(((user[i].getCooperation())/200.0))+" *rk_i "+Rk_i+ " Dk_i "+Dk_i+" formule_i "+formule_i);
 	                
-	                Rk_MaxU =  (int) ((user[MaxU].getSNRSubcarrier_case(j))*(1+1000000*(user[MaxU].getPDOR()*user[MaxU].getPDOR()*user[MaxU].getPDOR())));
-	                Dk_MaxU = Rk_MaxU - (((double)(user[MaxU].getCooperation())/200.0))*Rk_MaxU; 
+	                Rk_MaxU = user[MaxU].getSNRSubcarrier_case(j);
+	                Dk_MaxU = Rk_MaxU - (((double)(user[MaxU].getCooperation()-100)/200.0))*Rk_MaxU; 
 	                if(Dk_MaxU==0){
 	                	Dk_MaxU=0.1;
 	                }
-	                formule_MaxU = (Rk_MaxU/Dk_MaxU)*Tk_MaxU;
+	                formule_MaxU = (1+1000000*(user[MaxU].getPDOR()*user[MaxU].getPDOR()*user[MaxU].getPDOR()))*(user[MaxU].getSNRSubcarrier_case(j)*(Rk_MaxU/Dk_MaxU)*Tk_MaxU);
 					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
 					if((formule_i >= formule_MaxU) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){

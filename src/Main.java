@@ -12,7 +12,7 @@ public class Main {
 		int choixAlgo;
 		int i, j, g;
 		
-		double nb_bit_moy_genere = 120;
+		double nb_bit_moy_genere = 200;
 		
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
@@ -82,7 +82,21 @@ public class Main {
 		try {
 			
 			fichierSortie.println ("nb_tours="+nb_tours+";choixAlgo="+choixAlgo+";\n"); 
-			fichierSortie.println ("nb_bit_moy_genere;debit_total_simu;debit_user;debit_relayer;total_nbBitsgenere;debitTotal;delais_moyen;PDOR;res_sommeUR;bit_par_UR;taux_remplissage_buffer;nbPaquetsTotalsommePaquets_consommer;"); 
+			if(choixAlgo == 1){
+				fichierSortie.println ("nb_bit_moy_genere_RR;debit_total_simu_RR;debit_user_RR;debit_relayer_RR;total_nbBitsgenere_RR;debitTotal_RR;delais_moyen_RR;PDOR_RR;res_sommeUR_RR;bit_par_UR_RR;taux_remplissage_buffer_RR;nbPaquetsTotalsommePaquets_consommer_RR;"); 
+			}
+			else if(choixAlgo == 2){
+				fichierSortie.println ("nb_bit_moy_genere_MaxSNR;debit_total_simu_MaxSNR;debit_user_MaxSNR;debit_relayer_MaxSNR;total_nbBitsgenere_MaxSNR;debitTotal_MaxSNR;delais_moyen_MaxSNR;PDOR_MaxSNR;res_sommeUR_MaxSNR;bit_par_UR_MaxSNR;taux_remplissage_buffer_MaxSNR;nbPaquetsTotalsommePaquets_consommer_MaxSNR;"); 
+			}
+			else if(choixAlgo == 3){
+				fichierSortie.println ("nb_bit_moy_genere_WFO;debit_total_simu_WFO;debit_user_WFO;debit_relayer_WFO;total_nbBitsgenere_WFO;debitTotal_WFO;delais_moyen_WFO;PDOR_WFO;res_sommeUR_WFO;bit_par_UR_WFO;taux_remplissage_buffer_WFO;nbPaquetsTotalsommePaquets_consommer_WFO;"); 
+			}
+			else if(choixAlgo == 4){
+				fichierSortie.println ("nb_bit_moy_genere_CEI;debit_total_simu_CEI;debit_user;debit_relayer_CEI;total_nbBitsgenere_CEI;debitTotal_CEI;delais_moyen_CEI;PDOR_CEI;res_sommeUR;bit_par_UR_CEI;taux_remplissage_buffer_CEI;nbPaquetsTotalsommePaquets_consommer_CEI;"); 
+			}
+			else if(choixAlgo == 5){
+				fichierSortie.println ("nb_bit_moy_genere_CEIWFO;debit_total_simu_CEIWFO;debit_user;debit_relayer_CEIWFO;total_nbBitsgenere_CEIWFO;debitTotal_CEIWFO;delais_moyen_CEIWFO;PDOR_CEIWFO;res_sommeUR_CEIWFO;bit_par_UR_CEIWFO;taux_remplissage_buffer_CEIWFO;nbPaquetsTotalsommePaquets_consommer_CEIWFO;"); 
+			}
 			
 			fichierSortie.close();
 			
@@ -90,9 +104,22 @@ public class Main {
 			System.out.println(e.toString());
 		}	
 		
+		String fichierPDOR ="ResultatPDOR.csv";
+		FileWriter fwPDOR = new FileWriter (fichierPDOR);
+		BufferedWriter bwPDOR = new BufferedWriter (fwPDOR);
+		PrintWriter fichierSortiePDOR = new PrintWriter (bwPDOR); 
+		try {
+			
+			fichierSortiePDOR.println ("nb_tours="+nb_tours+";choixAlgo="+choixAlgo+";\n"); 
+			fichierSortiePDOR.println ("[0]0 80;[1]0 250;[2]0 1000;[3]25 80;[4]25 250;[5]25 1000;[6]50 80;[7]50 250;[8]50 1000;[9]75 80;[10]75 250;[11]75 1000;[12]100 80;[13]100 250;[14]100 100;"); 
+			fichierSortiePDOR.close();
+		}catch (Exception e){
+			System.out.println(e.toString());
+		}
+		
 		
 		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
-		while(nb_bit_moy_genere < 300){
+		while(nb_bit_moy_genere < 350){
 				
 			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);
@@ -147,8 +174,7 @@ public class Main {
 				}
 				else if(choixAlgo == 5){
 					 scheduler.CEI_WFO(tab_user, actualTime);//congestion a partir de 166
-				}
-				else{
+				}else{
 					System.out.println("choix de l'algorithme mauvais. Arret. \n");
 				}
 			
@@ -160,6 +186,13 @@ public class Main {
 				
 				/*Calcul du nombre de bit qui reste dans les paquets non envoyer pour chaque utilisateurs*/
 				for(g = 0; g < 15; g++){
+					if(tab_user[g].getSommePaquets_consommer()==0){//empécher la division par 0
+						tab_user[g].setPDOR(((double)tab_user[g].getSommeDelaisPDOR()/((double)(1)))*100);
+					}else{
+						tab_user[g].setPDOR(((double)tab_user[g].getSommeDelaisPDOR()/((double)(tab_user[g].getSommePaquets_consommer())))*100);
+					}
+					
+					
 					packet = tab_user[g].getLePaquet();
 					while(packet != null){
 						bit_restant = bit_restant + packet.getBitsRestants();
@@ -232,7 +265,9 @@ public class Main {
 			System.out.println("Pourcentage de bande passante utilisé : "+res_sommeUR);
 			System.out.println("Bit par Unité de ressource : "+bit_par_UR);
 			System.out.println("somme_bitsRestants/le temps : "+taux_remplissage_buffer);
-			System.out.println("PDOR : "+PDOR+" Ce resultat veux rien dire pour l'instant car il ont outs un seuil de PDOR different");
+			System.out.println("PDOR : "+PDOR+" [0]: "+tab_user[0].getPDOR()+" [1]: "+tab_user[1].getPDOR()+" [2]: "+tab_user[2].getPDOR()+" [3]: "+tab_user[3].getPDOR()+" [4]: "+tab_user[4].getPDOR()+" [5]: "
+			+tab_user[5].getPDOR()+" [6]: "+tab_user[6].getPDOR()+" [7]: "+tab_user[7].getPDOR()+" [8]: "+tab_user[8].getPDOR()+" [9]: "+tab_user[9].getPDOR()+" [10]: "+tab_user[10].getPDOR()+" [11]: "
+					+tab_user[11].getPDOR()+" [12]: "+tab_user[12].getPDOR()+" [13]: "+tab_user[13].getPDOR()+" [14]: "+tab_user[14].getPDOR());
 			System.out.println("Nombre total de Bits genere : "+total_nbBitsgenere+" bits || consommer : "+debitTotal+" bits");
 			System.out.println("Delai moyen : "+delais_moyen+" ms  || Somme des delais: "+sommeDelais+" ms");
 			System.out.println("Débit total de la simulation: "+debit_total_simu+" bits/ms || bit genere : "+nb_bit_moy_genere);
@@ -251,9 +286,20 @@ public class Main {
 				System.out.println(e.toString());
 			}
 			
-			
-			
-			if(delais_moyen > 1800){
+			try {
+				fwPDOR = new FileWriter (fichierPDOR, true);
+				bwPDOR = new BufferedWriter (fwPDOR);
+				fichierSortiePDOR = new PrintWriter (bwPDOR); 
+				//on écrit dans le fichier les resultat obtenue
+				fichierSortiePDOR.println (tab_user[0].getPDOR()+";"+tab_user[1].getPDOR()+";"+tab_user[2].getPDOR()+";"+tab_user[3].getPDOR()+";"+tab_user[4].getPDOR()+";"
+				+tab_user[5].getPDOR()+";"+tab_user[6].getPDOR()+";"+tab_user[7].getPDOR()+";"+tab_user[8].getPDOR()+";"+tab_user[9].getPDOR()+";"+tab_user[10].getPDOR()+";"
+				+tab_user[11].getPDOR()+";"+tab_user[12].getPDOR()+";"+tab_user[13].getPDOR()+";"+tab_user[14].getPDOR()+";"); 
+				fichierSortiePDOR.close();
+			}catch (Exception e){
+				System.out.println(e.toString());
+			}
+
+			if(delais_moyen > 2000){
 				//on incrémente le nb de bit qu'on va générer au prochain tour
 				nb_bit_moy_genere = nb_bit_moy_genere + 10;
 			}else{

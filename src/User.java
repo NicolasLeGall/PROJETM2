@@ -6,6 +6,7 @@ public class User {
 	private int cooperation;
 	private int seuilPDOR;
 	private int SNRmoyen;
+	private double PDOR;
 	private int SNRSubcarrier[] = new int[128];
 	private long sommePaquet;
 	private long sommeDelais;
@@ -37,6 +38,7 @@ public class User {
 		nb_bit_a_allouer = 0;
 		somme_nb_bit_relayer = 0;
 		bit_restant_paquet=0;
+		PDOR = 0;
 		bufferVide = true;
 		// on initialise les 128 subcarrier et on considére que cette valeur est la meme sur les 5 time slot
 		for(int i = 0; i < 128; i++){
@@ -46,6 +48,26 @@ public class User {
 	}
 	
 	
+	public double getPDOR() {
+		return PDOR;
+	}
+
+
+	public void setPDOR(double pDOR) {
+		PDOR = pDOR;
+	}
+
+
+	public long getBit_restant_paquet() {
+		return bit_restant_paquet;
+	}
+
+
+	public void setBit_restant_paquet(long bit_restant_paquet) {
+		this.bit_restant_paquet = bit_restant_paquet;
+	}
+
+
 	public long getbit_restant_paquet() {
 		return bit_restant_paquet;
 	}

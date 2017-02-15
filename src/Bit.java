@@ -22,7 +22,8 @@ public class Bit {
 				//on sauvegarde pour chaque user bitsGeneres
 				user[i].setBitsGeneres(bitsGeneres);
 				//on définit pendant combien de tour il va garder cette valeur en moyenne 10
-				user[i].setCompteur_bitsGeneres((int)(mrg.rand()*10));
+				//user[i].setCompteur_bitsGeneres((int)(mrg.rand()*10));
+				user[i].setCompteur_bitsGeneres(10);
 				//je compte le nombre de bit j'ai dans mes paquet (c'est pour faire fonctionner mon programme ça
 				user[i].setbit_restant_paquet(user[i].getbit_restant_paquet()+bitsGeneres);
 			}else{// si getCompteur_bitsGeneres() est != de 0

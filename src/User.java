@@ -7,6 +7,9 @@ public class User {
 	private int seuilPDOR;
 	private int SNRmoyen;
 	private double PDOR;
+	private double fenetrePDOR;
+	private int sommeDelaisPDOR_tour;
+	private int sommePaquets_consommer_tour;
 	private int SNRSubcarrier[] = new int[128];
 	private long sommePaquet;
 	private long sommeDelais;
@@ -39,6 +42,9 @@ public class User {
 		somme_nb_bit_relayer = 0;
 		bit_restant_paquet=0;
 		PDOR = 0;
+		fenetrePDOR = 0;
+		sommeDelaisPDOR_tour = 0;
+		sommePaquets_consommer_tour = 0;
 		bufferVide = true;
 		// on initialise les 128 subcarrier et on considére que cette valeur est la meme sur les 5 time slot
 		for(int i = 0; i < 128; i++){
@@ -48,6 +54,36 @@ public class User {
 	}
 	
 	
+	public int getSommeDelaisPDOR_tour() {
+		return sommeDelaisPDOR_tour;
+	}
+
+
+	public void setSommeDelaisPDOR_tour(int sommeDelaisPDOR_tour) {
+		this.sommeDelaisPDOR_tour = sommeDelaisPDOR_tour;
+	}
+
+
+	public int getSommePaquets_consommer_tour() {
+		return sommePaquets_consommer_tour;
+	}
+
+
+	public void setSommePaquets_consommer_tour(int sommePaquets_consommer_tour) {
+		this.sommePaquets_consommer_tour = sommePaquets_consommer_tour;
+	}
+
+
+	public double getFenetrePDOR() {
+		return fenetrePDOR;
+	}
+
+
+	public void setFenetrePDOR(double fenetrePDOR) {
+		this.fenetrePDOR = fenetrePDOR;
+	}
+
+
 	public double getPDOR() {
 		return PDOR;
 	}

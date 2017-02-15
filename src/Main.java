@@ -12,7 +12,7 @@ public class Main {
 		int choixAlgo;
 		int i, j, g;
 		
-		double nb_bit_moy_genere = 200;
+		double nb_bit_moy_genere = 130;
 		
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
@@ -43,6 +43,11 @@ public class Main {
 		int actualTime = 0;
 		int bit_restant = 0;
 		int debit[] = null;
+		long tab_paquet_PDOR[][] = new long[15][1000];
+		long tab_paquet_consommer[][] = new long[15][1000];
+		long somme_tab_paquet_PDOR[]=new long[15];
+		long somme_tab_paquet_consommer[] = new long[15];
+		double tab_delais_moyen_user[] = new double[15];
 		double debitTotal = 0;
 		double debit_relayer = 0;
 		double debit_user = 0;
@@ -111,7 +116,9 @@ public class Main {
 		try {
 			
 			fichierSortiePDOR.println ("nb_tours="+nb_tours+";choixAlgo="+choixAlgo+";\n"); 
-			fichierSortiePDOR.println ("[0]0 80;[1]0 250;[2]0 1000;[3]25 80;[4]25 250;[5]25 1000;[6]50 80;[7]50 250;[8]50 1000;[9]75 80;[10]75 250;[11]75 1000;[12]100 80;[13]100 250;[14]100 100;"); 
+			fichierSortiePDOR.println ("nb_bit_moy_genere;[0]0 80;[1]0 250;[2]0 1000;[3]25 80;[4]25 250;[5]25 1000;[6]50 80;[7]50 250;[8]50 1000;[9]75 80;[10]75 250;[11]75 1000;[12]100 80;[13]100 250;[14]100 100;;"
+					+ "[0]0 80;[1]0 250;[2]0 1000;[3]25 80;[4]25 250;[5]25 1000;[6]50 80;[7]50 250;[8]50 1000;[9]75 80;[10]75 250;[11]75 1000;[12]100 80;[13]100 250;[14]100 100;;"
+					+ "[0]0 80;[1]0 250;[2]0 1000;[3]25 80;[4]25 250;[5]25 1000;[6]50 80;[7]50 250;[8]50 1000;[9]75 80;[10]75 250;[11]75 1000;[12]100 80;[13]100 250;[14]100 100;;"); 
 			fichierSortiePDOR.close();
 		}catch (Exception e){
 			System.out.println(e.toString());
@@ -119,7 +126,7 @@ public class Main {
 		
 		
 		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
-		while(nb_bit_moy_genere < 350){
+		while(nb_bit_moy_genere < 230){
 				
 			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);
@@ -157,7 +164,7 @@ public class Main {
 					System.out.println();
 				}
 				System.out.println();*/
-					
+	
 	
 				/*Application de l'algorithme et ôtage des bits dans les paquets*/
 				if(choixAlgo == 1){
@@ -170,10 +177,10 @@ public class Main {
 					 scheduler.WFO(tab_user, actualTime);//congestion a partir de 216
 				}
 				else if(choixAlgo == 4){
-					 scheduler.CEI(tab_user, actualTime);//congestion a partir de 160
+					 scheduler.CEI(tab_user, actualTime);//congestion a partir de 200
 				}
 				else if(choixAlgo == 5){
-					 scheduler.CEI_WFO(tab_user, actualTime);//congestion a partir de 166
+					 scheduler.CEI_WFO(tab_user, actualTime);//congestion a partir de 200
 				}else{
 					System.out.println("choix de l'algorithme mauvais. Arret. \n");
 				}
@@ -184,15 +191,38 @@ public class Main {
 				debit_user +=debit[1];
 				debit_relayer +=debit[2];
 				
-				/*Calcul du nombre de bit qui reste dans les paquets non envoyer pour chaque utilisateurs*/
+				
 				for(g = 0; g < 15; g++){
-					if(tab_user[g].getSommePaquets_consommer()==0){//empécher la division par 0
-						tab_user[g].setPDOR(((double)tab_user[g].getSommeDelaisPDOR()/((double)(1)))*100);
+					//on enléve de notre somme la valeur de la case ou on est arriver
+					somme_tab_paquet_PDOR[g] = somme_tab_paquet_PDOR[g] - tab_paquet_PDOR[g][i%1000];
+					somme_tab_paquet_consommer[g] = somme_tab_paquet_consommer[g] - tab_paquet_consommer[g][i%1000];
+					//on met dans le tableau la nouvelle valeur
+					tab_paquet_PDOR[g][i%1000] = tab_user[g].getSommeDelaisPDOR_tour();
+					tab_paquet_consommer[g][i%1000] = tab_user[g].getSommePaquets_consommer_tour();
+					//on calcul la nouvelle somme
+					somme_tab_paquet_PDOR[g] = somme_tab_paquet_PDOR[g] + tab_paquet_PDOR[g][i%1000];
+					somme_tab_paquet_consommer[g] = somme_tab_paquet_consommer[g] + tab_paquet_consommer[g][i%1000];
+					//on calcul le PDOR a partir de la somme mis a jour
+					if(somme_tab_paquet_consommer[g]==0){
+						//tab_user[g].setFenetrePDOR(((double)(somme_tab_paquet_PDOR[g])) / ((double)(1)));
+						tab_user[g].setPDOR(100);
 					}else{
-						tab_user[g].setPDOR(((double)tab_user[g].getSommeDelaisPDOR()/((double)(tab_user[g].getSommePaquets_consommer())))*100);
+						tab_user[g].setFenetrePDOR(((double)(somme_tab_paquet_PDOR[g])) / ((double)(somme_tab_paquet_consommer[g])));
 					}
+					//System.out.println(tab_user[g].getFenetrePDOR());
+					//on met a 0 le nb paquet comsommer par tour  pour le prochain tour
+					tab_user[g].setSommePaquets_consommer_tour(0);
+					tab_user[g].setSommeDelaisPDOR_tour(0);
 					
 					
+					
+					if(tab_user[g].getSommePaquets_consommer()==0){//empécher la division par 0
+						//tab_user[g].setPDOR(((double)tab_user[g].getSommeDelaisPDOR()/((double)(1))));
+						tab_user[g].setPDOR(100);
+					}else{
+						tab_user[g].setPDOR(((double)tab_user[g].getSommeDelaisPDOR()/((double)(tab_user[g].getSommePaquets_consommer()))));
+					}
+					/*Calcul du nombre de bit qui reste dans les paquets non envoyer pour chaque utilisateurs*/
 					packet = tab_user[g].getLePaquet();
 					while(packet != null){
 						bit_restant = bit_restant + packet.getBitsRestants();
@@ -245,6 +275,7 @@ public class Main {
 				nbPaquetsTotalPDOR+= tab_user[j].getSommeDelaisPDOR();
 				nbPaquetsTotalsommePaquets_consommer += tab_user[j].getSommePaquets_consommer();
 				user_sommeUR += tab_user[j].getSommeUR();
+				tab_delais_moyen_user[j] = tab_user[j].getSommeDelais()/tab_user[j].getSommePaquets_consommer();
 			}
 			
 			bit_par_UR = debitTotal/((double)user_sommeUR);
@@ -265,13 +296,19 @@ public class Main {
 			System.out.println("Pourcentage de bande passante utilisé : "+res_sommeUR);
 			System.out.println("Bit par Unité de ressource : "+bit_par_UR);
 			System.out.println("somme_bitsRestants/le temps : "+taux_remplissage_buffer);
-			System.out.println("PDOR : "+PDOR+" [0]: "+tab_user[0].getPDOR()+" [1]: "+tab_user[1].getPDOR()+" [2]: "+tab_user[2].getPDOR()+" [3]: "+tab_user[3].getPDOR()+" [4]: "+tab_user[4].getPDOR()+" [5]: "
-			+tab_user[5].getPDOR()+" [6]: "+tab_user[6].getPDOR()+" [7]: "+tab_user[7].getPDOR()+" [8]: "+tab_user[8].getPDOR()+" [9]: "+tab_user[9].getPDOR()+" [10]: "+tab_user[10].getPDOR()+" [11]: "
-					+tab_user[11].getPDOR()+" [12]: "+tab_user[12].getPDOR()+" [13]: "+tab_user[13].getPDOR()+" [14]: "+tab_user[14].getPDOR());
-			System.out.println("Nombre total de Bits genere : "+total_nbBitsgenere+" bits || consommer : "+debitTotal+" bits");
-			System.out.println("Delai moyen : "+delais_moyen+" ms  || Somme des delais: "+sommeDelais+" ms");
+			System.out.println("% utilisation des UR par USER [0]: "+(tab_user[0].getSommeUR()/user_sommeUR)*100+" [1]: "+(tab_user[1].getSommeUR()/user_sommeUR)*100+" [2]: "+(tab_user[2].getSommeUR()/user_sommeUR)*100+" [3]: "+(tab_user[3].getSommeUR()/user_sommeUR)*100+" [4]: "+(tab_user[4].getSommeUR()/user_sommeUR)*100+" [5]: "
+			+(tab_user[5].getSommeUR()/user_sommeUR)*100+" [6]: "+(tab_user[6].getSommeUR()/user_sommeUR)*100+" [7]: "+(tab_user[7].getSommeUR()/user_sommeUR)*100+" [8]: "+(tab_user[8].getSommeUR()/user_sommeUR)*100+" [9]: "+(tab_user[9].getSommeUR()/user_sommeUR)*100+" [10]: "+(tab_user[10].getSommeUR()/user_sommeUR)*100+" [11]: "
+			+(tab_user[11].getSommeUR()/user_sommeUR)*100+" [12]: "+(tab_user[12].getSommeUR()/user_sommeUR)*100+" [13]: "+(tab_user[13].getSommeUR()/user_sommeUR)*100+" [14]: "+(tab_user[14].getSommeUR()/user_sommeUR)*100);
+			System.out.println("PDOR : "+PDOR+" [0]: "+tab_user[0].getPDOR()*100+" [1]: "+tab_user[1].getPDOR()*100+" [2]: "+tab_user[2].getPDOR()*100+" [3]: "+tab_user[3].getPDOR()*100+" [4]: "+tab_user[4].getPDOR()*100+" [5]: "
+			+tab_user[5].getPDOR()*100+" [6]: "+tab_user[6].getPDOR()*100+" [7]: "+tab_user[7].getPDOR()*100+" [8]: "+tab_user[8].getPDOR()*100+" [9]: "+tab_user[9].getPDOR()*100+" [10]: "+tab_user[10].getPDOR()*100+" [11]: "
+			+tab_user[11].getPDOR()*100+" [12]: "+tab_user[12].getPDOR()*100+" [13]: "+tab_user[13].getPDOR()*100+" [14]: "+tab_user[14].getPDOR()*100);
+			System.out.println("Delais par User [0]: "+tab_delais_moyen_user[0]+" [1]: "+tab_delais_moyen_user[1]+" [2]: "+tab_delais_moyen_user[2]+" [3]: "+tab_delais_moyen_user[3]+" [4]: "+tab_delais_moyen_user[4]+" [5]: "+tab_delais_moyen_user[5]
+			+" [6]: "+tab_delais_moyen_user[6]+" [7]: "+tab_delais_moyen_user[7]+" [8]: "+tab_delais_moyen_user[8]+" [9]: "+tab_delais_moyen_user[9]+" [10]: "+tab_delais_moyen_user[10]
+			+" [11]: "+tab_delais_moyen_user[11]+" [12]: "+tab_delais_moyen_user[12]+" [13]: "+tab_delais_moyen_user[13]+" [14]: "+tab_delais_moyen_user[14]);
+			System.out.println("Nombre total de Bits genere : "+total_nbBitsgenere+" bits || consommer : "+debitTotal+" bits || user : "+debit_user+" bits || relayer : "+debit_relayer+" bits" );
 			System.out.println("Débit total de la simulation: "+debit_total_simu+" bits/ms || bit genere : "+nb_bit_moy_genere);
 			System.out.println("Débit user: "+debit_total_simu_user+" bits/ms || Débit relayer: "+debit_total_simu_relayer);
+			System.out.println("Delai moyen : "+delais_moyen+" ms  || Somme des delais: "+sommeDelais+" ms");
 			System.out.println("");
 			
 			try {
@@ -291,22 +328,27 @@ public class Main {
 				bwPDOR = new BufferedWriter (fwPDOR);
 				fichierSortiePDOR = new PrintWriter (bwPDOR); 
 				//on écrit dans le fichier les resultat obtenue
-				fichierSortiePDOR.println (tab_user[0].getPDOR()+";"+tab_user[1].getPDOR()+";"+tab_user[2].getPDOR()+";"+tab_user[3].getPDOR()+";"+tab_user[4].getPDOR()+";"
-				+tab_user[5].getPDOR()+";"+tab_user[6].getPDOR()+";"+tab_user[7].getPDOR()+";"+tab_user[8].getPDOR()+";"+tab_user[9].getPDOR()+";"+tab_user[10].getPDOR()+";"
-				+tab_user[11].getPDOR()+";"+tab_user[12].getPDOR()+";"+tab_user[13].getPDOR()+";"+tab_user[14].getPDOR()+";"); 
+				fichierSortiePDOR.println (nb_bit_moy_genere+";"+tab_user[0].getPDOR()*100+";"+tab_user[1].getPDOR()*100+";"+tab_user[2].getPDOR()*100+";"+tab_user[3].getPDOR()*100+";"+tab_user[4].getPDOR()*100+";"
+				+tab_user[5].getPDOR()*100+";"+tab_user[6].getPDOR()*100+";"+tab_user[7].getPDOR()*100+";"+tab_user[8].getPDOR()*100+";"+tab_user[9].getPDOR()*100+";"+tab_user[10].getPDOR()*100+";"
+				+tab_user[11].getPDOR()*100+";"+tab_user[12].getPDOR()*100+";"+tab_user[13].getPDOR()*100+";"+tab_user[14].getPDOR()*100+";;"+(tab_user[0].getSommeUR()/user_sommeUR)*100+";"+(tab_user[1].getSommeUR()/user_sommeUR)*100+";"+(tab_user[2].getSommeUR()/user_sommeUR)*100+";"
+				+(tab_user[3].getSommeUR()/user_sommeUR)*100+";"+(tab_user[4].getSommeUR()/user_sommeUR)*100+";"+(tab_user[5].getSommeUR()/user_sommeUR)*100+";"+(tab_user[6].getSommeUR()/user_sommeUR)*100+";"+(tab_user[7].getSommeUR()/user_sommeUR)*100+";"
+				+(tab_user[8].getSommeUR()/user_sommeUR)*100+";"+(tab_user[9].getSommeUR()/user_sommeUR)*100+";"+(tab_user[10].getSommeUR()/user_sommeUR)*100+";"+(tab_user[11].getSommeUR()/user_sommeUR)*100+";"+(tab_user[12].getSommeUR()/user_sommeUR)*100+";"
+				+(tab_user[13].getSommeUR()/user_sommeUR)*100+";"+(tab_user[14].getSommeUR()/user_sommeUR)*100+";;"+tab_delais_moyen_user[0]+";"+tab_delais_moyen_user[1]+";"+tab_delais_moyen_user[2]+";"+tab_delais_moyen_user[3]+";"+tab_delais_moyen_user[4]+";"
+				+tab_delais_moyen_user[5]+";"+tab_delais_moyen_user[6]+";"+tab_delais_moyen_user[7]+";"+tab_delais_moyen_user[8]+";"+tab_delais_moyen_user[9]+";"+tab_delais_moyen_user[10]+";"+tab_delais_moyen_user[11]+";"+tab_delais_moyen_user[12]+";"
+				+tab_delais_moyen_user[13]+";"+tab_delais_moyen_user[14]+";"); 
 				fichierSortiePDOR.close();
 			}catch (Exception e){
 				System.out.println(e.toString());
 			}
 
-			if(delais_moyen > 2000){
+			/*if(delais_moyen > 2000){
 				//on incrémente le nb de bit qu'on va générer au prochain tour
 				nb_bit_moy_genere = nb_bit_moy_genere + 10;
-			}else{
+			}else{*/
 				//on incrémente le nb de bit qu'on va générer au prochain tour
 				nb_bit_moy_genere = nb_bit_moy_genere + 2;
 				
-			}
+			//}
 			
 			
 			

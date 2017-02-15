@@ -160,7 +160,7 @@ public class Algorithme {
 				
 					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
-					if((((SNRSubcarrier_i[i][j])*(1+1000000*(user[i].getPDOR()*user[i].getPDOR()*user[i].getPDOR()))) >= ((user[MaxU].getSNRSubcarrier_case(j))*(1+1000000*(user[MaxU].getSommeDelaisPDOR()*user[MaxU].getSommeDelaisPDOR()*user[MaxU].getSommeDelaisPDOR())))) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){
+					if((((SNRSubcarrier_i[i][j])*(1+1000000*(user[i].getFenetrePDOR()*user[i].getFenetrePDOR()*user[i].getFenetrePDOR()))) >= ((user[MaxU].getSNRSubcarrier_case(j))*(1+1000000*(user[MaxU].getFenetrePDOR()*user[MaxU].getFenetrePDOR()*user[MaxU].getFenetrePDOR())))) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){
 						// si l'User a un meilleur debit, et que son buffer n'est pas vide: il devient le MaxUser 
 						MaxU = i;
 						nouveau = 1;
@@ -173,7 +173,7 @@ public class Algorithme {
 				
 					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
-					if((((SNRSubcarrier_i[i][j])*(1+1000000*(user[i].getPDOR()*user[i].getPDOR()*user[i].getPDOR()))) >= ((user[MaxU].getSNRSubcarrier_case(j))*(1+1000000*(user[MaxU].getSommeDelaisPDOR()*user[MaxU].getSommeDelaisPDOR()*user[MaxU].getSommeDelaisPDOR())))) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){
+					if((((SNRSubcarrier_i[i][j])*(1+1000000*(user[i].getFenetrePDOR()*user[i].getFenetrePDOR()*user[i].getFenetrePDOR()))) >= ((user[MaxU].getSNRSubcarrier_case(j))*(1+1000000*(user[MaxU].getFenetrePDOR()*user[MaxU].getFenetrePDOR()*user[MaxU].getFenetrePDOR())))) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){
 						// si l'User a un meilleur debit, et que son buffer n'est pas vide: il devient le MaxUser 
 						MaxU = i;
 						nouveau = 1;
@@ -363,7 +363,7 @@ public class Algorithme {
 	                if(Dk_i==0){
 	                	Dk_i=0.1;
 	                }
-	                formule_i = (1+1000000*(user[i].getPDOR()*user[i].getPDOR()*user[i].getPDOR()))*(SNRSubcarrier_i[i][j]*(Rk_i/Dk_i)*Tk_i);
+	                formule_i = (1+1000000*(user[i].getFenetrePDOR()*user[i].getFenetrePDOR()*user[i].getFenetrePDOR()))*(SNRSubcarrier_i[i][j]*(Rk_i/Dk_i)*Tk_i);
 	                
 	                //System.out.println("SNR "+SNRSubcarrier_i[i][j]+" coop: "+(((user[i].getCooperation())/200.0))+" *rk_i "+Rk_i+ " Dk_i "+Dk_i+" formule_i "+formule_i);
 	                
@@ -372,7 +372,7 @@ public class Algorithme {
 	                if(Dk_MaxU==0){
 	                	Dk_MaxU=0.1;
 	                }
-	                formule_MaxU = (1+1000000*(user[MaxU].getPDOR()*user[MaxU].getPDOR()*user[MaxU].getPDOR()))*(user[MaxU].getSNRSubcarrier_case(j)*(Rk_MaxU/Dk_MaxU)*Tk_MaxU);
+	                formule_MaxU = (1+1000000*(user[MaxU].getFenetrePDOR()*user[MaxU].getFenetrePDOR()*user[MaxU].getFenetrePDOR()))*(user[MaxU].getSNRSubcarrier_case(j)*(Rk_MaxU/Dk_MaxU)*Tk_MaxU);
 					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
 					if((formule_i >= formule_MaxU) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){
@@ -393,7 +393,7 @@ public class Algorithme {
 	                if(Dk_i==0){
 	                	Dk_i=0.1;
 	                }
-	                formule_i = (1+1000000*(user[i].getPDOR()*user[i].getPDOR()*user[i].getPDOR()))*(SNRSubcarrier_i[i][j]*(Rk_i/Dk_i)*Tk_i);
+	                formule_i = (1+1000000*(user[i].getFenetrePDOR()*user[i].getFenetrePDOR()*user[i].getFenetrePDOR()))*(SNRSubcarrier_i[i][j]*(Rk_i/Dk_i)*Tk_i);
 	                
 	                //System.out.println("SNR "+SNRSubcarrier_i[i][j]+" coop: "+(((user[i].getCooperation())/200.0))+" *rk_i "+Rk_i+ " Dk_i "+Dk_i+" formule_i "+formule_i);
 	                
@@ -402,7 +402,7 @@ public class Algorithme {
 	                if(Dk_MaxU==0){
 	                	Dk_MaxU=0.1;
 	                }
-	                formule_MaxU = (1+1000000*(user[MaxU].getPDOR()*user[MaxU].getPDOR()*user[MaxU].getPDOR()))*(user[MaxU].getSNRSubcarrier_case(j)*(Rk_MaxU/Dk_MaxU)*Tk_MaxU);
+	                formule_MaxU = (1+1000000*(user[MaxU].getFenetrePDOR()*user[MaxU].getFenetrePDOR()*user[MaxU].getFenetrePDOR()))*(user[MaxU].getSNRSubcarrier_case(j)*(Rk_MaxU/Dk_MaxU)*Tk_MaxU);
 					//System.out.println("user: "+i+" sub: "+j+" SNR: "+SNRSubcarrier_i[i][j]);
 					/*si le SNR est mieu que celui a le meilleur SNR jusqu'a present et que buffervide =0 (bufervide est un bolean quand = 0 le buffer n'est pas vide)*/
 					if((formule_i >= formule_MaxU) && (user[i].getbit_restant_paquet() > 0) && (!(user[i].isBufferVide()))){

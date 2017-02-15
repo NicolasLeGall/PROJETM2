@@ -21,8 +21,8 @@ public class Bit {
 				bitsGeneres=(int) ((int)((-nb_bit_moy_genere) *(Math.log( 1 - mrg.rand()))));
 				//on sauvegarde pour chaque user bitsGeneres
 				user[i].setBitsGeneres(bitsGeneres);
-				//on définit pendant combien de tour il va garder cette valeur
-				user[i].setCompteur_bitsGeneres(3);
+				//on définit pendant combien de tour il va garder cette valeur en moyenne 10
+				user[i].setCompteur_bitsGeneres((int)(mrg.rand()*10));
 				//je compte le nombre de bit j'ai dans mes paquet (c'est pour faire fonctionner mon programme ça
 				user[i].setbit_restant_paquet(user[i].getbit_restant_paquet()+bitsGeneres);
 			}else{// si getCompteur_bitsGeneres() est != de 0
@@ -129,17 +129,20 @@ public class Bit {
 					if((actualTime - (user[i].getLePaquet().getDateCreation())) >= user[i].getSeuilPDOR()){
 						//on incremente la varaible qui compte le nombre de paquet qui sont arriver avec le seuil du PDOR qu'on a fixer
 						user[i].setSommeDelaisPDOR(user[i].getSommeDelaisPDOR()+1);
+						user[i].setSommeDelaisPDOR_tour(user[i].getSommeDelaisPDOR_tour()+1);
 					}
 					// si il reste plusieurs packet dans la chaine exemple de chaine (64=>100=>100=>NULL)
 					if((user[i].getLePaquet().getNextPaquet() != null)){
 						//System.out.println("plusieur"+nb_bit_a_consommer);
 						user[i].setSommePaquets_consommer(user[i].getSommePaquets_consommer()+1);
+						user[i].setSommePaquets_consommer_tour(user[i].getSommePaquets_consommer_tour()+1);
 						nb_bit_a_consommer = nb_bit_a_consommer - user[i].getLePaquet().getBitsRestants();
 						
 						user[i].setLePaquet(user[i].getLePaquet().getNextPaquet());
 					}else{//si il rester qu'un packet dans la chaine. Le nb de bit consommer c'est le nb de bit qu'il rester dans le paquet. On supprimer pas le paquet on met juste ces variable à 0.
 						//System.out.println("un seul"+user[i].getLePaquet().getBitsRestants());
 						user[i].setSommePaquets_consommer(user[i].getSommePaquets_consommer()+1);
+						user[i].setSommePaquets_consommer_tour(user[i].getSommePaquets_consommer_tour()+1);
 						//nb_bit_a_consommer = nb_bit_a_consommer - user[i].getLePaquet().getBitsRestants();
 						nb_bit_a_consommer = 0;
 						user[i].getLePaquet().setBitsRestants(0);

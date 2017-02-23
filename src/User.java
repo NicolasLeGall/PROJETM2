@@ -2,7 +2,7 @@
 public class User {
 	
 
-
+	private int distance;
 	private int cooperation;
 	private int seuilPDOR;
 	private int SNRmoyen;
@@ -24,18 +24,19 @@ public class User {
 	private int compteur_bitsGeneres;
 	private int nb_bit_a_allouer;
 	private long bit_restant_paquet;
-	
+	private long real_bit_restant_paquet;
 
 
 
-	public User(int coop, int seuil){
-		
+	public User(int coop, int seuil, int dist){
+		distance = dist;
 		cooperation = coop;
 		seuilPDOR = seuil;
 		lePaquet = new Paquet(-1, -1, null);
 		SNRmoyen = 0;
 		bit_en_trop = 0;
 		sommePaquet = 0;
+		real_bit_restant_paquet=0;
 		bitsGeneres = 0;
 		compteur_bitsGeneres = 0;	
 		nb_bit_a_allouer = 0;
@@ -54,6 +55,26 @@ public class User {
 	}
 	
 	
+	public int getDistance() {
+		return distance;
+	}
+
+
+	public void setDistance(int distance) {
+		this.distance = distance;
+	}
+
+
+	public long getReal_bit_restant_paquet() {
+		return real_bit_restant_paquet;
+	}
+
+
+	public void setReal_bit_restant_paquet(long real_bit_restant_paquet) {
+		this.real_bit_restant_paquet = real_bit_restant_paquet;
+	}
+
+
 	public int getSommeDelaisPDOR_tour() {
 		return sommeDelaisPDOR_tour;
 	}

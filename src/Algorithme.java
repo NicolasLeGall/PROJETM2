@@ -53,10 +53,10 @@ public class Algorithme {
 		int nouveau = 0;
 		int random_user = 0;
 		MRG32k3a mrg = new MRG32k3a();
-		int[][] SNRSubcarrier_i = new int[15][128];
+		int[][] SNRSubcarrier_i = new int[nb_user][128];
 		int SNRSubcarrier_MaxU[] = new int[128];
 		
-		for(i=0; i< 15;i++){
+		for(i=0; i< nb_user;i++){
 			for(j=0; j<128; j++){
 				SNRSubcarrier_i[i][j] = user[i].getSNRSubcarrier_case(j);			
 			}	
@@ -127,10 +127,10 @@ public class Algorithme {
 		int nouveau = 0;
 		int random_user = 0;
 		MRG32k3a mrg = new MRG32k3a();
-		int[][] SNRSubcarrier_i = new int[15][128];
+		int[][] SNRSubcarrier_i = new int[nb_user][128];
 		int SNRSubcarrier_MaxU[] = new int[128];
 		
-		for(i=0; i< 15;i++){
+		for(i=0; i< nb_user;i++){
 			for(j=0; j<128; j++){
 				SNRSubcarrier_i[i][j] = user[i].getSNRSubcarrier_case(j);			
 			}	
@@ -200,7 +200,7 @@ public class Algorithme {
 		int nouveau = 0;
 		int random_user = 0;
 		MRG32k3a mrg = new MRG32k3a();
-		int[][] SNRSubcarrier_i = new int[15][128];
+		int[][] SNRSubcarrier_i = new int[nb_user][128];
 		int SNRSubcarrier_MaxU[] = new int[128];
 		
 		int Rk_i = 0;// where Rk = global amount of data,
@@ -213,7 +213,7 @@ public class Algorithme {
 	    int Tk_MaxU = 1;// Tk is a Security variable (too disable Cheaters)
 	    double formule_MaxU =0;
 	    
-		for(i=0; i< 15;i++){
+		for(i=0; i< nb_user;i++){
 			for(j=0; j<128; j++){
 				SNRSubcarrier_i[i][j] = user[i].getSNRSubcarrier_case(j);			
 			}	
@@ -315,7 +315,7 @@ public class Algorithme {
 		int nouveau = 0;
 		int random_user = 0;
 		MRG32k3a mrg = new MRG32k3a();
-		int[][] SNRSubcarrier_i = new int[15][128];
+		int[][] SNRSubcarrier_i = new int[nb_user][128];
 		int SNRSubcarrier_MaxU[] = new int[128];
 		
 		int Rk_i = 0;// where Rk = global amount of data,
@@ -328,7 +328,7 @@ public class Algorithme {
 	    int Tk_MaxU = 1;// Tk is a Security variable (too disable Cheaters)
 	    double formule_MaxU =0;
 	    
-		for(i=0; i< 15;i++){
+		for(i=0; i< nb_user;i++){
 			for(j=0; j<128; j++){
 				SNRSubcarrier_i[i][j] = user[i].getSNRSubcarrier_case(j);			
 			}	

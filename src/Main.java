@@ -19,25 +19,25 @@ public class Main {
 		Scanner scanInt = new Scanner(System.in);
 		User tab_user[] = new User[15];
 		
-		tab_user[0] = new User(100, 80);
-		tab_user[1] = new User(100, 250);
-		tab_user[2] = new User(100, 1000);
+		tab_user[0] = new User(100, 80, 6);
+		tab_user[1] = new User(100, 250, 6);
+		tab_user[2] = new User(100, 1000, 6);
 	
-		tab_user[3] = new User(125, 80);
-		tab_user[4] = new User(125, 250);
-		tab_user[5] = new User(125, 1000);
+		tab_user[3] = new User(125, 80, 6);
+		tab_user[4] = new User(125, 250, 6);
+		tab_user[5] = new User(125, 1000, 6);
 		
-		tab_user[6] = new User(150, 80);
-		tab_user[7] = new User(150, 250);
-		tab_user[8] = new User(150, 1000);
+		tab_user[6] = new User(150, 80, 6);
+		tab_user[7] = new User(150, 250, 6);
+		tab_user[8] = new User(150, 1000, 6);
 		
-		tab_user[9] = new User(175, 80);
-		tab_user[10] = new User(175, 250);
-		tab_user[11] = new User(175, 1000);
+		tab_user[9] = new User(175, 80, 6);
+		tab_user[10] = new User(175, 250, 6);
+		tab_user[11] = new User(175, 1000, 6);
 		
-		tab_user[12] = new User(200, 80);
-		tab_user[13] = new User(200, 250);
-		tab_user[14] = new User(200, 1000);
+		tab_user[12] = new User(200, 80, 6);
+		tab_user[13] = new User(200, 250, 6);
+		tab_user[14] = new User(200, 1000, 6);
 		
 		
 		int actualTime = 0;
@@ -126,7 +126,7 @@ public class Main {
 		
 		
 		/*boucle principal on incrément nb_bit_moy_genere de 10 par tour*/
-		while(nb_bit_moy_genere < 230){
+		while(nb_bit_moy_genere < 270){
 				
 			// un packet qui sert de paquet tampoon pour récuperé des informations
 			Paquet packet = new Paquet(0, 0, null);
@@ -224,12 +224,14 @@ public class Main {
 					}
 					/*Calcul du nombre de bit qui reste dans les paquets non envoyer pour chaque utilisateurs*/
 					packet = tab_user[g].getLePaquet();
-					while(packet != null){
+					/*while(packet != null){
 						bit_restant = bit_restant + packet.getBitsRestants();
 						tab_user[g].setbit_restant_paquet(bit_restant);
 						somme_bitsRestants = somme_bitsRestants + packet.getBitsRestants();
 						packet = packet.getNextPaquet();
-					}
+					}*/
+					tab_user[g].setbit_restant_paquet(tab_user[g].getReal_bit_restant_paquet());
+					somme_bitsRestants = somme_bitsRestants + tab_user[g].getReal_bit_restant_paquet();
 					bit_restant=0;
 				}
 				
@@ -379,25 +381,25 @@ public class Main {
 			
 			actualTime = 0;
 			
-			tab_user[0] = new User(100, 80);
-			tab_user[1] = new User(100, 250);
-			tab_user[2] = new User(100, 1000);
+			tab_user[0] = new User(100, 80, 6);
+			tab_user[1] = new User(100, 250, 6);
+			tab_user[2] = new User(100, 1000, 6);
 		
-			tab_user[3] = new User(125, 80);
-			tab_user[4] = new User(125, 250);
-			tab_user[5] = new User(125, 1000);
+			tab_user[3] = new User(125, 80, 6);
+			tab_user[4] = new User(125, 250, 6);
+			tab_user[5] = new User(125, 1000, 6);
 			
-			tab_user[6] = new User(150, 80);
-			tab_user[7] = new User(150, 250);
-			tab_user[8] = new User(150, 1000);
+			tab_user[6] = new User(150, 80, 6);
+			tab_user[7] = new User(150, 250, 6);
+			tab_user[8] = new User(150, 1000, 6);
 			
-			tab_user[9] = new User(175, 80);
-			tab_user[10] = new User(175, 250);
-			tab_user[11] = new User(175, 1000);
+			tab_user[9] = new User(175, 80, 6);
+			tab_user[10] = new User(175, 250, 6);
+			tab_user[11] = new User(175, 1000, 6);
 			
-			tab_user[12] = new User(200, 80);
-			tab_user[13] = new User(200, 250);
-			tab_user[14] = new User(200, 1000);
+			tab_user[12] = new User(200, 80, 6);
+			tab_user[13] = new User(200, 250, 6);
+			tab_user[14] = new User(200, 1000, 6);
 			
 		}
 		

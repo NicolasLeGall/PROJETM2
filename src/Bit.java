@@ -1,7 +1,7 @@
 
 public class Bit {
 
-	
+	int nb_user = 15;
 	
 	
 	public int produceBit(User user[], int actualTime, double nb_bit_moy_genere){
@@ -12,7 +12,7 @@ public class Bit {
 		int i = 0;
 		// Création d'un nouveau packet 
 		Paquet packet = new Paquet(-1, -1, null);
-		for(i = 0; i<15; i++){
+		for(i = 0; i<nb_user; i++){
 			continuer = true;
 			// on fait en sorte que quans un user tire une valeur il la garde pendant 3 tour.
 			if(user[i].getCompteur_bitsGeneres() == 0){
@@ -26,6 +26,7 @@ public class Bit {
 				user[i].setCompteur_bitsGeneres(10);
 				//je compte le nombre de bit j'ai dans mes paquet (c'est pour faire fonctionner mon programme ça
 				user[i].setbit_restant_paquet(user[i].getbit_restant_paquet()+bitsGeneres);
+				user[i].setReal_bit_restant_paquet(user[i].getReal_bit_restant_paquet()+bitsGeneres);
 			}else{// si getCompteur_bitsGeneres() est != de 0
 				//on tire une valeur avec comme moyenne la valeur qu'on a tier dans la premire parti du if() (bitsGeneres)
 				bitsGeneres = (int) ((int)((-user[i].getBitsGeneres()) *(Math.log( 1 - mrg.rand()))));
@@ -33,6 +34,7 @@ public class Bit {
 				user[i].setCompteur_bitsGeneres(user[i].getCompteur_bitsGeneres()-1);
 				//je compte le nombre de bit j'ai dans mes paquet (c'est pour faire fonctionner mon programme ça
 				user[i].setbit_restant_paquet(user[i].getbit_restant_paquet()+bitsGeneres);
+				user[i].setReal_bit_restant_paquet(user[i].getReal_bit_restant_paquet()+bitsGeneres);
 			}
 			
 			//Mais dans un premier temps pour simplifier on genre juste de maniére alétoire le nombre de bit. Avec comme moyenne nb_bit_moy_genere qui en envoiyer en paramatre
@@ -101,7 +103,7 @@ public class Bit {
 		int i =0;
 		int nb_bit_a_consommer = 0;
 		int nb_bit_relayer = 0;
-		for(i = 0; i<15; i++){
+		for(i = 0; i<nb_user; i++){
 			//on applique le % de cooperation pour savoir le nombre de bit qu'on garde et le nombre qu'on relay
 			if(user[i].getCooperation() != 100){
 				nb_bit_a_consommer = (int)(user[i].getNb_bit_a_allouer()*(100.0/(float)(user[i].getCooperation())));
@@ -137,6 +139,7 @@ public class Bit {
 						//System.out.println("plusieur"+nb_bit_a_consommer);
 						user[i].setSommePaquets_consommer(user[i].getSommePaquets_consommer()+1);
 						user[i].setSommePaquets_consommer_tour(user[i].getSommePaquets_consommer_tour()+1);
+						user[i].setReal_bit_restant_paquet(user[i].getReal_bit_restant_paquet()-user[i].getLePaquet().getBitsRestants());
 						nb_bit_a_consommer = nb_bit_a_consommer - user[i].getLePaquet().getBitsRestants();
 						
 						user[i].setLePaquet(user[i].getLePaquet().getNextPaquet());
@@ -145,6 +148,7 @@ public class Bit {
 						user[i].setSommePaquets_consommer(user[i].getSommePaquets_consommer()+1);
 						user[i].setSommePaquets_consommer_tour(user[i].getSommePaquets_consommer_tour()+1);
 						//nb_bit_a_consommer = nb_bit_a_consommer - user[i].getLePaquet().getBitsRestants();
+						user[i].setReal_bit_restant_paquet(user[i].getReal_bit_restant_paquet()-user[i].getLePaquet().getBitsRestants());
 						nb_bit_a_consommer = 0;
 						user[i].getLePaquet().setBitsRestants(0);
 						user[i].getLePaquet().setDateCreation(-1);
@@ -155,6 +159,7 @@ public class Bit {
 					//on fait bit_restant - SNRSubcarrier dans le paquet. 
 					//System.out.println("else"+nb_bit_a_consommer);
 					user[i].getLePaquet().setBitsRestants((user[i].getLePaquet().getBitsRestants())-(nb_bit_a_consommer));
+					user[i].setReal_bit_restant_paquet(user[i].getReal_bit_restant_paquet()-nb_bit_a_consommer);
 					nb_bit_a_consommer = 0;				
 				}
 			}

@@ -20,6 +20,7 @@ public class User {
 	private long sommeUR;
 	private boolean bufferVide;
 	private Paquet lePaquet;
+	private Paquet lePaquet_queue;
 	private int bitsGeneres;
 	private int compteur_bitsGeneres;
 	private int nb_bit_a_allouer;
@@ -33,6 +34,7 @@ public class User {
 		cooperation = coop;
 		seuilPDOR = seuil;
 		lePaquet = new Paquet(-1, -1, null);
+		lePaquet_queue = null;
 		SNRmoyen = 0;
 		bit_en_trop = 0;
 		sommePaquet = 0;
@@ -55,6 +57,16 @@ public class User {
 	}
 	
 	
+	public Paquet getLePaquet_queue() {
+		return lePaquet_queue;
+	}
+
+
+	public void setLePaquet_queue(Paquet lePaquet_queue) {
+		this.lePaquet_queue = lePaquet_queue;
+	}
+
+
 	public int getDistance() {
 		return distance;
 	}

@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class Main {
 
+	static int nb_user = 15;
 	public static void main(String[] args) throws IOException {
 		
 		int nb_tours;
@@ -17,7 +18,7 @@ public class Main {
 		Algorithme scheduler = new Algorithme();
 		Bit gestion_de_bit = new Bit();
 		Scanner scanInt = new Scanner(System.in);
-		User tab_user[] = new User[15];
+		User tab_user[] = new User[nb_user];
 		
 		tab_user[0] = new User(100, 80, 6);
 		tab_user[1] = new User(100, 250, 6);
@@ -43,11 +44,11 @@ public class Main {
 		int actualTime = 0;
 		int bit_restant = 0;
 		int debit[] = null;
-		long tab_paquet_PDOR[][] = new long[15][1000];
-		long tab_paquet_consommer[][] = new long[15][1000];
-		long somme_tab_paquet_PDOR[]=new long[15];
-		long somme_tab_paquet_consommer[] = new long[15];
-		double tab_delais_moyen_user[] = new double[15];
+		long tab_paquet_PDOR[][] = new long[nb_user][50000];
+		long tab_paquet_consommer[][] = new long[nb_user][50000];
+		long somme_tab_paquet_PDOR[]=new long[nb_user];
+		long somme_tab_paquet_consommer[] = new long[nb_user];
+		double tab_delais_moyen_user[] = new double[nb_user];
 		double debitTotal = 0;
 		double debit_relayer = 0;
 		double debit_user = 0;
@@ -192,16 +193,16 @@ public class Main {
 				debit_relayer +=debit[2];
 				
 				
-				for(g = 0; g < 15; g++){
+				for(g = 0; g < nb_user; g++){
 					//on enléve de notre somme la valeur de la case ou on est arriver
-					somme_tab_paquet_PDOR[g] = somme_tab_paquet_PDOR[g] - tab_paquet_PDOR[g][i%1000];
-					somme_tab_paquet_consommer[g] = somme_tab_paquet_consommer[g] - tab_paquet_consommer[g][i%1000];
+					somme_tab_paquet_PDOR[g] = somme_tab_paquet_PDOR[g] - tab_paquet_PDOR[g][i%50000];
+					somme_tab_paquet_consommer[g] = somme_tab_paquet_consommer[g] - tab_paquet_consommer[g][i%50000];
 					//on met dans le tableau la nouvelle valeur
-					tab_paquet_PDOR[g][i%1000] = tab_user[g].getSommeDelaisPDOR_tour();
-					tab_paquet_consommer[g][i%1000] = tab_user[g].getSommePaquets_consommer_tour();
+					tab_paquet_PDOR[g][i%50000] = tab_user[g].getSommeDelaisPDOR_tour();
+					tab_paquet_consommer[g][i%50000] = tab_user[g].getSommePaquets_consommer_tour();
 					//on calcul la nouvelle somme
-					somme_tab_paquet_PDOR[g] = somme_tab_paquet_PDOR[g] + tab_paquet_PDOR[g][i%1000];
-					somme_tab_paquet_consommer[g] = somme_tab_paquet_consommer[g] + tab_paquet_consommer[g][i%1000];
+					somme_tab_paquet_PDOR[g] = somme_tab_paquet_PDOR[g] + tab_paquet_PDOR[g][i%50000];
+					somme_tab_paquet_consommer[g] = somme_tab_paquet_consommer[g] + tab_paquet_consommer[g][i%50000];
 					//on calcul le PDOR a partir de la somme mis a jour
 					if(somme_tab_paquet_consommer[g]==0){
 						//tab_user[g].setFenetrePDOR(((double)(somme_tab_paquet_PDOR[g])) / ((double)(1)));
@@ -258,7 +259,7 @@ public class Main {
 				
 			}
 			//parcour des utilisateurs
-			for(j=0; j<15;j++){
+			for(j=0; j<nb_user;j++){
 				/*Si il reste des packet non envoyer --> Récupération des délais et nb de paquets restants dans les paquets non envoyes */
 				if(tab_user[j].getLePaquet().getBitsRestants() != 0){
 					packet = tab_user[j].getLePaquet();
@@ -419,7 +420,7 @@ public class Main {
 		MRG32k3a mrg = new MRG32k3a();
 		double somme= 0;
 		//parcour des utilisateurs
-		for(i = 0; i<15; i++){
+		for(i = 0; i<nb_user; i++){
 			for(j = 0; j<128; j++){//parcour des subcarrier. On parcour pas les timeslots car on considére que le mkn ne varie pas sur un si petit laps de temps. Donc oui les Times slot ne serve a rien.
 				//System.out.println("test3 = "+mrg.rand());
 				//formule du mkn demander a cédric pour plus de détail moi je m'en rapelle plus. Mais en gros sa prend en compte la distance, la puissance, sa génre des log etc

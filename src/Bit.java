@@ -59,7 +59,7 @@ public class Bit {
 						packet.setDateCreation(actualTime);
 						packet.setBitsRestants(40);
 						user[i].setBit_en_trop(user[i].getBit_en_trop()-40);
-						
+						user[i].setLePaquet_queue(packet);
 						user[i].setSommePaquet(user[i].getSommePaquet()+1);
 				//System.out.println("utilisateur: "+i+" bit geneere"+user[i].getBit_en_trop());
 					}else{//si le nombre de bit dans Bit_en_trop est insuffisant pour les mettre en paquet on les garde en mémoire et on les mettra en paquet quand on en auras plus de 100
@@ -67,11 +67,12 @@ public class Bit {
 	
 					}
 				}else{//si le buffer contient quelque chose (n'est pas vide)
-					packet = user[i].getLePaquet();
+					/*packet = user[i].getLePaquet();
 					// on parcourt les paquet pour arriver au dernier
 					while(packet.getNextPaquet() != null){
 						packet = packet.getNextPaquet();
-					}
+					}*/
+					packet = user[i].getLePaquet_queue();
 					// si le nombre de bit généré est plus grand que la taille d'un paquet
 					if(user[i].getBit_en_trop() >= 40){
 						//on créer un nouveau paquet et on met dedans 100bit et sa date de création
@@ -85,8 +86,10 @@ public class Bit {
 						user[i].setLePaquet(packet);
 						packet = packet.getNextPaquet();
 						*/
-						//on met a jour la varaible du nombre de paquet créer
+						user[i].setLePaquet_queue(packet.getNextPaquet());
+						//on met a jour la varaible du nombre de paquet créer			
 						user[i].setSommePaquet(user[i].getSommePaquet()+1);
+						
 					}else{//si le nombre de bit dans Bit_en_trop est insuffisant pour les mettre en paquet on les garde en mémoire et on les mettra en paquet quand on en auras plus de 100
 						continuer = false;
 					}
